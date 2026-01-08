@@ -14,5 +14,9 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"
+  },
+  "dependencies": {
+    "lit-html": "^3.3.2",
+    "solit-html": "github:duncsully/solit-html"
   }
 }
