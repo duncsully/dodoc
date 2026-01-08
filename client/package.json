@@ -16,7 +16,15 @@
     "vite": "npm:rolldown-vite@7.2.5"
   },
   "dependencies": {
+    "@m3e/all": "^1.1.2",
     "lit-html": "^3.3.2",
     "solit-html": "github:duncsully/solit-html"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true,
+    "bracketSpacing": true
   }
 }
