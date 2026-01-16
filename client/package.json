@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typegen": "npx pocketbase-typegen --db ../server/pb_data/data.db --out ./src/pb_types.ts"
   },
   "devDependencies": {
     "typescript": "~5.9.3",
@@ -20,6 +21,7 @@
     "dompurify": "^3.3.1",
     "lit-html": "^3.3.2",
     "marked": "^17.0.1",
+    "pocketbase": "^0.26.6",
     "solit-html": "github:duncsully/solit-html"
   },
   "prettier": {
