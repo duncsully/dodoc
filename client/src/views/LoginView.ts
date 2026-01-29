@@ -4,7 +4,6 @@ import { withEventValue } from '../utils'
 
 export function LoginView() {
   const [showSignup, setShowSignup] = state(false)
-  const [showPassword, setShowPassword] = state(false)
   const [email, setEmail] = state('')
   const [password, setPassword] = state('')
   const formDisabled = () => !email().length || !password().length
@@ -46,24 +45,16 @@ export function LoginView() {
           <ion-item>
             <ion-input
               label="Password"
+              type="password"
               label-placement="floating"
               id="password"
-              .type=${() => (showPassword() ? 'text' : 'password')}
               .value=${password}
               @ionInput=${withEventValue(setPassword)}
               required
-            ></ion-input>
-            <ion-button
-              fill="clear"
-              color="secondary"
-              slot="end"
-              @click=${() => setShowPassword(!showPassword())}
             >
-              <ion-icon
-                slot="icon-only"
-                name=${() => (showPassword() ? 'eye-off' : 'eye')}
-              ></ion-icon>
-            </ion-button>
+              <ion-input-password-toggle slot="end">
+              </ion-input-password-toggle>
+            </ion-input>
           </ion-item>
           <ion-button
             color="primary"
