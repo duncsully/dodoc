@@ -1,27 +1,37 @@
 import { html } from 'solit-html'
 import './style.css'
-import '@m3e/app-bar'
-import '@m3e/theme'
-import { isLoggedIn, logout } from './dataService'
-import { LoginView } from './components/Login'
-import '@m3e/icon'
-import '@m3e/icon-button'
+import { isLoggedIn, useSyncDocuments } from './dataService'
+import { LoginView } from './views/LoginView'
+import './theme/md3/theme.css'
+import { HomeView } from './views/HomeView'
+import { DocumentView } from './views/DocumentView'
+import { DocumentFormView } from './views/DocumentFormView'
+import { customElementFrom } from './utils'
 
 export function App() {
-  return html`<m3e-theme>
-    ${() =>
-      isLoggedIn()
-        ? html`<m3e-app-bar>
-              <span slot="title">Dodoc</span>
-              <m3e-icon-button
-                slot="trailing-icon"
-                aria-label="Logout"
-                @click=${logout}
-              >
-                <m3e-icon name="logout"></m3e-icon>
-              </m3e-icon-button>
-            </m3e-app-bar>
-            <main></main>`
-        : LoginView()}
-  </m3e-theme>`
+  return html`
+    <ion-app>
+      ${() => (isLoggedIn() ? AuthenticatedApp() : LoginView())}
+    </ion-app>
+  `
+}
+
+function AuthenticatedApp() {
+  useSyncDocuments()
+  return html`
+    <ion-router .useHash=${false}>
+      <ion-route url="/" component=${customElementFrom(HomeView)}></ion-route>
+      <ion-route
+        url="/new"
+        component=${customElementFrom(DocumentFormView)}
+      ></ion-route>
+      <ion-route url="/:id" component=${customElementFrom(DocumentView)}>
+      </ion-route>
+      <ion-route
+        url="/:id/edit"
+        component=${customElementFrom(DocumentFormView)}
+      ></ion-route>
+    </ion-router>
+    <ion-router-outlet></ion-router-outlet>
+  `
 }
