@@ -53,7 +53,13 @@ let tagCounter = 0
  */
 export function customElementFrom(component: (props: any) => TemplateResult) {
   class CustomElement extends HTMLElement {
-    // TODO: generalize for multiple props. For now this is the only expected route param
+    /**
+     * ion-route passes path params directly as properties on the element.
+     * Convert this value to a signal so we can track changes.
+     *
+     * For now, we only support the "id" param, but this should be generalized
+     * for arbitrary params if needed in the future.
+     */
     idSig = signal('')
     set id(value: string) {
       this.idSig.value = value

@@ -24,6 +24,7 @@
   - [ ] From home view
 - [ ] Share documents with other users (permissions: read/write)
 - [ ] Tags for documents
+- [ ] Reminders as push notifications
 
 ## Someday
 
@@ -39,8 +40,6 @@
 - [ ] Better error handling in login forms?
 - [ ] Two-pane view in larger screens (document list + document view)
 - [ ] Archive documents (only findable via "show archived" filter)
-- [ ] Router animations (or should I leverage Ionic's router?)
-- [ ] Encrypted documents
 - [ ] MD extensions
 - [ ] Soft delete with undo, cron job to purge
 - [ ] Copy document (e.g. for templates, or offline edits before conflict resolution)
