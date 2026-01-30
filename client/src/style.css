@@ -14,3 +14,15 @@ body {
   max-width: 1280px;
   margin: 0 auto;
 }
+
+html {
+  color-scheme: light dark;
+}
+
+html[data-theme=light] {
+  color-scheme: light;
+}
+
+html[data-theme=dark] {
+  color-scheme: dark;
+}

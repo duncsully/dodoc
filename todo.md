@@ -9,7 +9,7 @@
 - [x] Install marked.js
 - [x] Figure out backend (Pocketbase)
 - [x] Start documents table
-- [ ] Create build script and embed client SPA into BE executable
+- [x] Embed client SPA into BE executable
 
 ## MVP features
 

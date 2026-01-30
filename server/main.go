@@ -1,21 +1,25 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log"
 
 	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 )
+
+//go:embed dist/**
+var distDir embed.FS
+
+var DistDirFS, _ = fs.Sub(distDir, "dist")
 
 func main() {
 	app := pocketbase.New()
 
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
-		// registers new "GET /hello" route
-		se.Router.GET("/hello", func(re *core.RequestEvent) error {
-			return re.String(200, "Hello world!")
-		})
-
+		se.Router.GET("/{path...}", apis.Static(DistDirFS, true))
 		return se.Next()
 	})
 
