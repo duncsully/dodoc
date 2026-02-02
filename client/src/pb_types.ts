@@ -94,10 +94,11 @@ export type SuperusersRecord = {
 }
 
 export type DocumentsRecord = {
-	content?: HTMLString
+	content?: string
 	created: IsoAutoDateString
 	id: string
 	owner?: RecordIdString
+	shared?: RecordIdString[]
 	title: string
 	updated: IsoAutoDateString
 }
