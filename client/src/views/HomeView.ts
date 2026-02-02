@@ -17,16 +17,26 @@ export function HomeView() {
     </ion-header>
     <ion-content fixed-slot-placement="before">
       <ion-list>
-        ${() =>
-          repeat(
-            documents(),
+        ${() => {
+          const docs = documents()
+          if (!docs) {
+            return html`<ion-item><ion-spinner></ion-spinner></ion-item>`
+          }
+          if (docs.length === 0) {
+            return html`<ion-item>
+              No documents yet. Click the + button to add one.
+            </ion-item>`
+          }
+          return repeat(
+            docs,
             (doc) => doc.id,
             (doc) => html`
               <ion-item button href=${doc.id}>
                 <ion-label>${doc.title}</ion-label>
               </ion-item>
             `
-          )}
+          )
+        }}
       </ion-list>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button aria-label="Add Document" href="/new">

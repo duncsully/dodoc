@@ -44,14 +44,14 @@ export const logout = () => {
 // * Keep a global list of all documents in memory
 // * Do initial load when useSyncDocuments is first called
 // * Also subscribe to changes and remain subscribed while app is running
-const [documents, setDocuments] = state<DocumentsRecord[]>([])
+const [documents, setDocuments] = state<DocumentsRecord[] | null>(null)
 
 /**
  * Loads all documents and keeps them in sync via realtime subscriptions.
  * Should be called once after authenticating.
  */
 export function useSyncDocuments() {
-  if (!documents().length) {
+  if (!documents(false)) {
     pb.collection('documents')
       .getFullList({
         sort: '-created',
@@ -61,7 +61,7 @@ export function useSyncDocuments() {
 
   effect(function subscribeToDocuments() {
     pb.collection('documents').subscribe('*', (e) => {
-      const docs = documents(false)
+      const docs = documents(false) ?? []
       const index = docs.findIndex((d) => d.id === e.record.id)
 
       let newDocs = [...docs]
@@ -87,7 +87,7 @@ export function useDocuments() {
 }
 
 export function useDocument(id: () => string) {
-  return memo(() => documents().find((d) => d.id === id()))
+  return memo(() => documents()?.find((d) => d.id === id()))
 }
 
 export function createDocument(data: Create<Collections.Documents>) {
