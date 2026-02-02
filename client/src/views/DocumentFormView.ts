@@ -1,6 +1,11 @@
 import { html, state } from 'solit-html'
-import { createDocument, updateDocument, useDocument } from '../dataService'
-import { navigate, showToast, withEventValue } from '../utils'
+import {
+  createDocument,
+  deleteDocument,
+  updateDocument,
+  useDocument,
+} from '../dataService'
+import { navigate, showAlert, showToast, withEventValue } from '../utils'
 
 export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const doc = id?.(false) ? useDocument(id) : null
@@ -27,6 +32,31 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
     }
   }
 
+  const handleDelete = async () => {
+    if (!id?.()) return
+    showAlert('Are you sure you want to delete this document?', {
+      header: 'Delete Document',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              await deleteDocument(id())
+              navigate('/', 'root')
+            } catch (err) {
+              showToast('Failed to delete document: ' + (err as Error).message)
+            }
+          },
+        },
+      ],
+    })
+  }
+
   return html`
     <ion-header>
       <ion-toolbar>
@@ -37,6 +67,18 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
           ></ion-back-button>
         </ion-buttons>
         <ion-title>${() => (doc ? 'Edit Document' : 'New Document')}</ion-title>
+        <ion-buttons slot="end">
+          ${doc &&
+          html`
+            <ion-button
+              aria-label="Delete Document"
+              @click=${handleDelete}
+              color="danger"
+            >
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          `}
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
