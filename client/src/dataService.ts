@@ -3,10 +3,11 @@
 import Pocketbase from 'pocketbase'
 import type {
   TypedPocketBase,
-  DocumentsRecord,
   Update,
   Collections,
   Create,
+  UsersRecord,
+  DocumentsResponse,
 } from './pb_types'
 import { effect, memo, state } from 'solit-html'
 
@@ -39,12 +40,29 @@ export const logout = () => {
   pb.authStore.clear()
 }
 
+export const useMe = () => {
+  return pb.authStore.record
+}
+
+export const useUsers = () => {
+  return pb.collection('users').getFullList({
+    sort: 'email',
+    filter: `emailVisibility=true && id!="${pb.authStore.record?.id}"`,
+  })
+}
+
 // Document management --------------------------------------------------------
 // For now, state management strategy is:
 // * Keep a global list of all documents in memory
 // * Do initial load when useSyncDocuments is first called
 // * Also subscribe to changes and remain subscribed while app is running
-const [documents, setDocuments] = state<DocumentsRecord[] | null>(null)
+
+type DocumentExpand = {
+  owner: Pick<UsersRecord, 'id' | 'name' | 'email'>
+}
+type DocumentWithExpand = DocumentsResponse<DocumentExpand>
+
+const [documents, setDocuments] = state<DocumentWithExpand[] | null>(null)
 
 /**
  * Loads all documents and keeps them in sync via realtime subscriptions.
@@ -53,27 +71,36 @@ const [documents, setDocuments] = state<DocumentsRecord[] | null>(null)
 export function useSyncDocuments() {
   if (!documents(false)) {
     pb.collection('documents')
-      .getFullList({
+      .getFullList<DocumentWithExpand>({
         sort: '-created',
+        expand: 'owner',
+        fields: '*,expand.owner.id,expand.owner.name,expand.owner.email',
       })
       .then(setDocuments)
   }
 
   effect(function subscribeToDocuments() {
-    pb.collection('documents').subscribe('*', (e) => {
-      const docs = documents(false) ?? []
-      const index = docs.findIndex((d) => d.id === e.record.id)
+    pb.collection('documents').subscribe<DocumentWithExpand>(
+      '*',
+      (e) => {
+        const docs = documents(false) ?? []
+        const index = docs.findIndex((d) => d.id === e.record.id)
 
-      let newDocs = [...docs]
-      if (e.action === 'create') {
-        newDocs.unshift(e.record)
-      } else if (e.action === 'update' && index !== -1) {
-        newDocs[index] = e.record
-      } else if (e.action === 'delete' && index !== -1) {
-        newDocs.splice(index, 1)
+        let newDocs = [...docs]
+        if (e.action === 'create') {
+          newDocs.unshift(e.record)
+        } else if (e.action === 'update' && index !== -1) {
+          newDocs[index] = e.record
+        } else if (e.action === 'delete' && index !== -1) {
+          newDocs.splice(index, 1)
+        }
+        setDocuments(newDocs)
+      },
+      {
+        expand: 'owner',
+        fields: '*,expand.owner.id,expand.owner.name,expand.owner.email',
       }
-      setDocuments(newDocs)
-    })
+    )
 
     return () => {
       pb.collection('documents').unsubscribe('*')

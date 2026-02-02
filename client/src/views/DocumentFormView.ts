@@ -4,20 +4,25 @@ import {
   deleteDocument,
   updateDocument,
   useDocument,
+  useMe,
+  useUsers,
 } from '../dataService'
 import { navigate, showAlert, showToast, withEventValue } from '../utils'
+import { until } from 'lit-html/directives/until.js'
+import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 
 export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const doc = id?.(false) ? useDocument(id) : null
 
   const [title, setTitle] = state(doc?.()?.title ?? '')
+  const [shared, setShared] = state<string[]>(doc?.()?.shared ?? [])
   const [content, setContent] = state(doc?.()?.content ?? '')
   const invalid = () => !title().trim().length
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault()
     if (invalid()) return
-    const data = { title: title(), content: content() }
+    const data = { title: title(), content: content(), shared: shared() }
 
     try {
       if (doc?.()?.id) {
@@ -68,16 +73,18 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         </ion-buttons>
         <ion-title>${() => (doc ? 'Edit Document' : 'New Document')}</ion-title>
         <ion-buttons slot="end">
-          ${doc &&
-          html`
-            <ion-button
-              aria-label="Delete Document"
-              @click=${handleDelete}
-              color="danger"
-            >
-              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-            </ion-button>
-          `}
+          ${() =>
+            doc &&
+            doc?.()?.owner === useMe()?.id &&
+            html`
+              <ion-button
+                aria-label="Delete Document"
+                @click=${handleDelete}
+                color="danger"
+              >
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            `}
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -92,6 +99,36 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
             @ionInput=${withEventValue(setTitle)}
             required
           ></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select
+            label="Share document"
+            label-placement="floating"
+            multiple
+            .value=${shared}
+            @ionChange=${(e: IonSelectCustomEvent<SelectChangeEventDetail>) =>
+              setShared(e.detail.value)}
+          >
+            ${until(
+              useUsers().then((users) => {
+                if (users.length === 0) {
+                  return html`<ion-select-option disabled>
+                    No users available
+                  </ion-select-option>`
+                }
+                return users.map(
+                  (user) => html`
+                    <ion-select-option value=${user.id}>
+                      ${user.name || user.email}
+                    </ion-select-option>
+                  `
+                )
+              }),
+              html`<ion-select-option disabled>
+                Loading users...
+              </ion-select-option>`
+            )}
+          </ion-select>
         </ion-item>
         <ion-item>
           <ion-textarea
