@@ -64,6 +64,23 @@ type DocumentWithExpand = DocumentsResponse<DocumentExpand>
 
 const [documents, setDocuments] = state<DocumentWithExpand[] | null>(null)
 
+export const [searchQuery, setSearchQuery] = state('')
+
+const visibleDocuments = memo(() => {
+  const docs = documents()
+  const query = searchQuery().toLowerCase()
+
+  if (!docs) return null
+  if (!query) return docs
+
+  return docs.filter((d) => {
+    return (
+      d.title.toLowerCase().includes(query) ||
+      d.content.toLowerCase().includes(query)
+    )
+  })
+})
+
 /**
  * Loads all documents and keeps them in sync via realtime subscriptions.
  * Should be called once after authenticating.
@@ -110,7 +127,7 @@ export function useSyncDocuments() {
 }
 
 export function useDocuments() {
-  return documents
+  return visibleDocuments
 }
 
 export function useDocument(id: () => string) {

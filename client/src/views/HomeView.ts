@@ -1,13 +1,23 @@
 import { html } from 'solit-html'
-import { logout, useDocuments } from '../dataService'
+import {
+  logout,
+  searchQuery,
+  setSearchQuery,
+  useDocuments,
+} from '../dataService'
 import { repeat } from 'lit-html/directives/repeat.js'
+import { withEventValue } from '../utils'
 
 export function HomeView() {
   const documents = useDocuments()
   return html`
     <ion-header>
       <ion-toolbar>
-        <ion-title>Dodoc</ion-title>
+        <ion-searchbar
+          animated
+          .value=${searchQuery}
+          @ionInput=${withEventValue(setSearchQuery)}
+        ></ion-searchbar>
         <ion-buttons slot="end">
           <ion-button aria-label="Logout" @click=${logout} color="primary">
             <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>

@@ -16,15 +16,13 @@
 - [x] User auth (signup, login)
 - [x] Logout
 - [x] List documents
-- [ ] Basic search/filter documents
+- [x] Basic search/filter documents
 - [x] View document
 - [x] Create and edit documents
   - [ ] Preview mode (rendered markdown)
 - [x] Delete documents
-  - [ ] From home view
 - [x] Share documents with other users
   - [ ] Show sharing info
-- [ ] Tags for documents
 - [ ] Reminders as push notifications
 - [ ] User profile (change email, password, avatar, visibility etc.)
   - [ ] User name (and show in shared document list)
@@ -45,6 +43,8 @@
 - [ ] Soft delete with undo, cron job to purge
 - [ ] Copy document (e.g. for templates, or offline edits before conflict resolution)
 - [ ] Decline shared document^
+- [ ] Tags for documents@
+- [ ] Search query syntax (and, or, title, content, exact, starts with, created before/after etc.)
 
 ## Polish
 
@@ -64,3 +64,5 @@
 ~ I could use Dexie or a local DB to cache documents offline, maybe readonly as a first step. Instead of fetching for all documents, the client could fetch only updated documents since last sync and update the local cache. On document view, it could load from local cache first, then update from server in background. In another iteration, I could support locally created documents that sync when back online. Finally, I could think about conflict resolution for supporting offline edits.
 
 ^ Might need to wait until permission table instead of shared multi-select field so that I can more easily give a user the auth to delete their record for a shared document. Might also want to inform user when a document has been shared with them and let them accept/decline.
+
+@ For the time being, full text search allows user-implemented tags using their own syntax like @tag. I'll revisit implementing tags as a first-class feature after I understand this approach's limitations.
