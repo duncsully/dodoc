@@ -78,3 +78,31 @@ export function customElementFrom(component: (props: any) => TemplateResult) {
 export function navigate(url: string, direction: RouterDirection = 'forward') {
   document.querySelector('ion-router')?.push(url, direction)
 }
+
+export function relativeTimeFromNow(date: Date | string) {
+  const relTimeFormat = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+  const diffMs = new Date(date).getTime() - Date.now()
+  const diffSec = Math.round(diffMs / 1000)
+  const diffMin = Math.round(diffSec / 60)
+  const diffHour = Math.round(diffMin / 60)
+  const diffDay = Math.round(diffHour / 24)
+  const diffWeek = Math.round(diffDay / 7)
+  const diffMonth = Math.round(diffDay / 30)
+  const diffYear = Math.round(diffDay / 365)
+
+  const unitDiffs = {
+    year: diffYear,
+    month: diffMonth,
+    week: diffWeek,
+    day: diffDay,
+    hour: diffHour,
+    minute: diffMin,
+    second: diffSec,
+  }
+  for (const [unit, diff] of Object.entries(unitDiffs)) {
+    if (Math.abs(diff) >= 1) {
+      return relTimeFormat.format(diff, unit as Intl.RelativeTimeFormatUnit)
+    }
+  }
+  return 'just now'
+}

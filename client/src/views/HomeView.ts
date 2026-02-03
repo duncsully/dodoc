@@ -4,9 +4,11 @@ import {
   searchQuery,
   setSearchQuery,
   useDocuments,
+  useMe,
+  type Document,
 } from '../dataService'
 import { repeat } from 'lit-html/directives/repeat.js'
-import { withEventValue } from '../utils'
+import { relativeTimeFromNow, withEventValue } from '../utils'
 
 export function HomeView() {
   const documents = useDocuments()
@@ -37,15 +39,7 @@ export function HomeView() {
               No documents yet. Click the + button to add one.
             </ion-item>`
           }
-          return repeat(
-            docs,
-            (doc) => doc.id,
-            (doc) => html`
-              <ion-item button href=${doc.id}>
-                <ion-label>${doc.title}</ion-label>
-              </ion-item>
-            `
-          )
+          return repeat(docs, (doc) => doc.id, DocumentItem)
         }}
       </ion-list>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
@@ -54,5 +48,17 @@ export function HomeView() {
         </ion-fab-button>
       </ion-fab>
     </ion-content>
+  `
+}
+
+function DocumentItem(doc: Document) {
+  const isShared = !!doc.shared.length
+  return html`
+    <ion-item button href=${doc.id}>
+      <ion-label>
+        ${doc.title}
+        ${isShared && html`<p>Updated ${relativeTimeFromNow(doc.updated)}</p>`}
+      </ion-label>
+    </ion-item>
   `
 }

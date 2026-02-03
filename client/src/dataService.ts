@@ -62,6 +62,9 @@ type DocumentExpand = {
 }
 type DocumentWithExpand = DocumentsResponse<DocumentExpand>
 
+// Alias for external usage
+export type Document = DocumentWithExpand
+
 const [documents, setDocuments] = state<DocumentWithExpand[] | null>(null)
 
 export const [searchQuery, setSearchQuery] = state('')
