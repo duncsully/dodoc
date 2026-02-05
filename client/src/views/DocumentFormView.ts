@@ -10,6 +10,7 @@ import {
 import { navigate, showAlert, showToast, withEventValue } from '../utils'
 import { until } from 'lit-html/directives/until.js'
 import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
+import { MarkdownDisplay } from '../components/MarkdownDisplay'
 
 export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const doc = id?.(false) ? useDocument(id) : null
@@ -89,57 +90,78 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <form @submit=${handleSubmit}>
-        <ion-item>
-          <ion-input
-            label="Title"
-            label-placement="floating"
-            type="text"
-            .value=${title}
-            @ionInput=${withEventValue(setTitle)}
-            required
-          ></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-select
-            label="Share document"
-            label-placement="floating"
-            multiple
-            .value=${shared}
-            @ionChange=${(e: IonSelectCustomEvent<SelectChangeEventDetail>) =>
-              setShared(e.detail.value)}
-          >
-            ${until(
-              useUsers().then((users) => {
-                if (users.length === 0) {
-                  return html`<ion-select-option disabled>
-                    No users available
-                  </ion-select-option>`
-                }
-                return users.map(
-                  (user) => html`
-                    <ion-select-option value=${user.id}>
-                      ${user.name || user.email}
-                    </ion-select-option>
-                  `
-                )
-              }),
-              html`<ion-select-option disabled>
-                Loading users...
-              </ion-select-option>`
-            )}
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-textarea
-            label="Content"
-            label-placement="floating"
-            auto-grow
-            min-rows="5"
-            .value=${content}
-            @ionInput=${withEventValue(setContent)}
-          ></ion-textarea>
-        </ion-item>
+      <form
+        @submit=${handleSubmit}
+        class="ion-display-flex ion-flex-column"
+        style="gap: 16px;"
+      >
+        <ion-input
+          label="Title"
+          label-placement="floating"
+          type="text"
+          .value=${title}
+          @ionInput=${withEventValue(setTitle)}
+          required
+          fill="outline"
+        ></ion-input>
+
+        <ion-select
+          label="Share with"
+          label-placement="floating"
+          multiple
+          .value=${shared}
+          @ionChange=${(e: IonSelectCustomEvent<SelectChangeEventDetail>) =>
+            setShared(e.detail.value)}
+          fill="outline"
+          helper-text="Selected users will be able to view and edit this document."
+        >
+          ${until(
+            useUsers().then((users) => {
+              if (users.length === 0) {
+                return html`<ion-select-option disabled>
+                  No users available
+                </ion-select-option>`
+              }
+              return users.map(
+                (user) => html`
+                  <ion-select-option value=${user.id}>
+                    ${user.name || user.email}
+                  </ion-select-option>
+                `
+              )
+            }),
+            html`<ion-select-option disabled>
+              Loading users...
+            </ion-select-option>`
+          )}
+        </ion-select>
+
+        <!-- TODO: The M3 overrides messes with the segment button styles -->
+        <ion-segment color="tertiary">
+          <ion-segment-button value="editor" content-id="editor">
+            <ion-label>Editor</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="preview" content-id="preview">
+            <ion-label>Preview</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <ion-segment-view>
+          <ion-segment-content id="editor" class="ion-padding-top">
+            <ion-textarea
+              label="Content"
+              label-placement="floating"
+              auto-grow
+              min-rows="5"
+              .value=${content}
+              @ionInput=${withEventValue(setContent)}
+              fill="outline"
+              helper-text="Markdown supported"
+            ></ion-textarea>
+          </ion-segment-content>
+          <ion-segment-content id="preview" class="ion-padding-top">
+            ${MarkdownDisplay(content)}
+          </ion-segment-content>
+        </ion-segment-view>
       </form>
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button

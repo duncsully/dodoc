@@ -15,7 +15,7 @@ export function DocumentView({ id }: { id: () => string }) {
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      ${() => MarkdownDisplay(doc()?.content ?? '')}
+      ${MarkdownDisplay(() => doc()?.content ?? '')}
       <ion-fab slot="fixed" vertical="bottom" horizontal="end">
         <ion-fab-button
           aria-label="Edit Document"

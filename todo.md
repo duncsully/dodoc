@@ -19,13 +19,14 @@
 - [x] Basic search/filter documents
 - [x] View document
 - [x] Create and edit documents
-  - [ ] Preview mode (rendered markdown)
+  - [x] Preview mode (rendered markdown)
 - [x] Delete documents
 - [x] Share documents with other users
   - [ ] Show sharing info
 - [ ] Reminders as push notifications
 - [ ] User profile (change email, password, avatar, visibility etc.)
   - [ ] User name (and show in shared document list)
+- [ ] Responsive design using fixed width ion-grid
 
 ## Someday
 
@@ -45,6 +46,9 @@
 - [ ] Decline shared document^
 - [ ] Tags for documents@
 - [ ] Search query syntax (and, or, title, content, exact, starts with, created before/after etc.)
+  - [ ] Saved queries (either as home view filters and/or embeddable in documents?)
+- [ ] Lookup and automatically link documents in editor
+- [ ] Syntax to embed documents within documents (yo dawg I heard you like documents...)
 
 ## Polish
 
