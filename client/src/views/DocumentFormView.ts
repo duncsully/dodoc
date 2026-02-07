@@ -4,7 +4,7 @@ import {
   deleteDocument,
   updateDocument,
   useDocument,
-  useMe,
+  myUser,
   useUsers,
 } from '../dataService'
 import { navigate, showAlert, showToast, withEventValue } from '../utils'
@@ -76,7 +76,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         <ion-buttons slot="end">
           ${() =>
             doc &&
-            doc?.()?.owner === useMe()?.id &&
+            doc?.()?.owner === myUser()?.id &&
             html`
               <ion-button
                 aria-label="Delete Document"
@@ -95,46 +95,56 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         class="ion-display-flex ion-flex-column"
         style="gap: 16px;"
       >
-        <ion-input
-          label="Title"
-          label-placement="floating"
-          type="text"
-          .value=${title}
-          @ionInput=${withEventValue(setTitle)}
-          required
-          fill="outline"
-        ></ion-input>
+        ${() =>
+          !doc || doc()?.owner === myUser()?.id
+            ? html`
+                <ion-input
+                  label="Title"
+                  label-placement="floating"
+                  type="text"
+                  .value=${title}
+                  @ionInput=${withEventValue(setTitle)}
+                  required
+                  fill="outline"
+                ></ion-input>
 
-        <ion-select
-          label="Share with"
-          label-placement="floating"
-          multiple
-          .value=${shared}
-          @ionChange=${(e: IonSelectCustomEvent<SelectChangeEventDetail>) =>
-            setShared(e.detail.value)}
-          fill="outline"
-          helper-text="Selected users will be able to view and edit this document."
-        >
-          ${until(
-            useUsers().then((users) => {
-              if (users.length === 0) {
-                return html`<ion-select-option disabled>
-                  No users available
-                </ion-select-option>`
-              }
-              return users.map(
-                (user) => html`
-                  <ion-select-option value=${user.id}>
-                    ${user.name || user.email}
-                  </ion-select-option>
-                `
-              )
-            }),
-            html`<ion-select-option disabled>
-              Loading users...
-            </ion-select-option>`
-          )}
-        </ion-select>
+                <ion-select
+                  label="Share with"
+                  label-placement="floating"
+                  multiple
+                  .value=${shared}
+                  @ionChange=${(
+                    e: IonSelectCustomEvent<SelectChangeEventDetail>
+                  ) => setShared(e.detail.value)}
+                  fill="outline"
+                  helper-text="Selected users will be able to view and edit this document."
+                >
+                  ${until(
+                    useUsers().then((users) => {
+                      if (users.length === 0) {
+                        return html`<ion-select-option disabled>
+                          No users available
+                        </ion-select-option>`
+                      }
+                      return users.map(
+                        (user) => html`
+                          <ion-select-option value=${user.id}>
+                            ${user.name || user.email}
+                          </ion-select-option>
+                        `
+                      )
+                    }),
+                    html`<ion-select-option disabled>
+                      Loading users...
+                    </ion-select-option>`
+                  )}
+                </ion-select>
+              `
+            : html` <ion-text><h2>${title()}</h2></ion-text>
+                <ion-note>
+                  Shared by
+                  ${doc()?.expand.owner.name || doc()?.expand.owner.email}
+                </ion-note>`}
 
         <!-- TODO: The M3 overrides messes with the segment button styles -->
         <ion-segment color="tertiary">

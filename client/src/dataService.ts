@@ -40,7 +40,12 @@ export const logout = () => {
   pb.authStore.clear()
 }
 
-export const useMe = () => {
+export const updateUser = async (data: Update<Collections.Users>) => {
+  if (!pb.authStore.record) throw new Error('Not authenticated')
+  return await pb.collection('users').update(pb.authStore.record.id, data)
+}
+
+export const myUser = () => {
   return pb.authStore.record
 }
 
