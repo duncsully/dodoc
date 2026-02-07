@@ -3,6 +3,7 @@ import {
   toastController,
   type AlertOptions,
   type RouterDirection,
+  type ToastOptions,
 } from '@ionic/core'
 import { render, type TemplateResult } from 'lit-html'
 import { signal } from 'solit-html'
@@ -15,7 +16,10 @@ export function withEventValue(cb: (value: string) => void) {
   return (e: Event) => cb(e.target ? (e.target as HTMLInputElement).value : '')
 }
 
-export async function showToast(message: string) {
+export async function showToast(
+  message: string,
+  color?: ToastOptions['color']
+) {
   const toast = await toastController.create({
     message,
     duration: 2000,
@@ -26,6 +30,7 @@ export async function showToast(message: string) {
         role: 'cancel',
       },
     ],
+    color,
   })
   return toast.present()
 }

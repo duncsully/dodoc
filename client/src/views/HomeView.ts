@@ -4,7 +4,6 @@ import {
   searchQuery,
   setSearchQuery,
   useDocuments,
-  useMe,
   type Document,
 } from '../dataService'
 import { repeat } from 'lit-html/directives/repeat.js'
@@ -20,11 +19,7 @@ export function HomeView() {
           .value=${searchQuery}
           @ionInput=${withEventValue(setSearchQuery)}
         ></ion-searchbar>
-        <ion-buttons slot="end">
-          <ion-button aria-label="Logout" @click=${logout} color="primary">
-            <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end">${UserMenu()}</ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content fixed-slot-placement="before">
@@ -61,4 +56,35 @@ function DocumentItem(doc: Document) {
       </ion-label>
     </ion-item>
   `
+}
+
+function UserMenu() {
+  return html`<ion-button aria-label="User menu" id="user-menu" color="primary">
+      <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-popover
+      trigger="user-menu"
+      side="bottom"
+      alignment="end"
+      dismiss-on-select
+    >
+      <ion-list>
+        <ion-item button href="/profile">
+          <ion-icon
+            slot="start"
+            name="person-outline"
+            color="primary"
+          ></ion-icon>
+          Profile
+        </ion-item>
+        <ion-item button @click=${logout}>
+          <ion-icon
+            slot="start"
+            name="log-out-outline"
+            color="primary"
+          ></ion-icon>
+          Logout
+        </ion-item>
+      </ion-list>
+    </ion-popover>`
 }

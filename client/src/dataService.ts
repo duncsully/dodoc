@@ -49,6 +49,14 @@ export const myUser = () => {
   return pb.authStore.record
 }
 
+export const myAvatarUrl = () => {
+  const user = pb.authStore.record
+  if (user?.avatar) {
+    return pb.files.getURL(user, user.avatar)
+  }
+  return 'https://ionicframework.com/docs/img/demos/avatar.svg'
+}
+
 export const useUsers = () => {
   return pb.collection('users').getFullList({
     sort: 'email',

@@ -24,8 +24,9 @@
 - [x] Share documents with other users
   - [ ] Show sharing info
 - [ ] Reminders as push notifications
-- [ ] User profile (change email, password, avatar, visibility etc.)
-  - [ ] User name (and show in shared document list)
+- [x] User profile (avatar, visibility etc.)
+  - [x] User name (and show in shared document list)
+  - [ ] Change email and password
 - [ ] Responsive design using fixed width ion-grid
 
 ## Someday
@@ -49,6 +50,8 @@
   - [ ] Saved queries (either as home view filters and/or embeddable in documents?)
 - [ ] Lookup and automatically link documents in editor
 - [ ] Syntax to embed documents within documents (yo dawg I heard you like documents...)
+- [ ] Table styles in markdown
+- [ ] Show found text in search results list with context and highlights
 
 ## Polish
 
@@ -56,6 +59,9 @@
 - [ ] Better empty state for no documents
 - [ ] Better spacing in signup form for error messages?
 - [ ] Better error handling in login forms?
+- [ ] If user hides their profile after having documents shared with them, what then?
+- [ ] Show user avatar for user menu button
+- [ ] Segment buttons (tabs) don't look great with M3 overrides
 
 ## DX
 
