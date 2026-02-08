@@ -14,7 +14,7 @@ export function DocumentView({ id }: { id: () => string }) {
         </ion-buttons>
         <ion-title>${() => doc()?.title ?? 'Loading...'}</ion-title>
         <ion-buttons slot="end">
-          <ion-button id="doc-more-options">
+          <ion-button id="doc-more-options" color="primary">
             <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
           </ion-button>
           <ion-popover

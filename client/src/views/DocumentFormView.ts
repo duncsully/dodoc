@@ -52,7 +52,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
           ${() =>
             doc &&
             doc?.()?.owner === myUser()?.id &&
-            html`<ion-button id="doc-form-more-options">
+            html`<ion-button id="doc-form-more-options" color="primary">
               <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
               <ion-popover
                 trigger="doc-form-more-options"
