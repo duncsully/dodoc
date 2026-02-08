@@ -78,12 +78,21 @@ type DocumentWithExpand = DocumentsResponse<DocumentExpand>
 // Alias for external usage
 export type Document = DocumentWithExpand
 
-const [documents, setDocuments] = state<DocumentWithExpand[] | null>(null)
+const [documents, setDocuments] = state<Record<
+  string,
+  DocumentWithExpand
+> | null>(null)
+
+const sortedDocuments = memo(() =>
+  Object.values(documents() ?? {}).sort((a, b) => {
+    return new Date(b.updated).getTime() - new Date(a.updated).getTime()
+  })
+)
 
 export const [searchQuery, setSearchQuery] = state('')
 
 const visibleDocuments = memo(() => {
-  const docs = documents()
+  const docs = sortedDocuments()
   const query = searchQuery().toLowerCase()
 
   if (!docs) return null
@@ -109,23 +118,26 @@ export function useSyncDocuments() {
         expand: 'owner',
         fields: '*,expand.owner.id,expand.owner.name,expand.owner.email',
       })
-      .then(setDocuments)
+      .then((docs) => {
+        const docsById = docs.reduce((acc, doc) => {
+          acc[doc.id] = doc
+          return acc
+        }, {} as Record<string, DocumentWithExpand>)
+        setDocuments(docsById)
+      })
   }
 
   effect(function subscribeToDocuments() {
     pb.collection('documents').subscribe<DocumentWithExpand>(
       '*',
       (e) => {
-        const docs = documents(false) ?? []
-        const index = docs.findIndex((d) => d.id === e.record.id)
+        const docs = documents(false) ?? {}
 
-        let newDocs = [...docs]
-        if (e.action === 'create') {
-          newDocs.unshift(e.record)
-        } else if (e.action === 'update' && index !== -1) {
-          newDocs[index] = e.record
-        } else if (e.action === 'delete' && index !== -1) {
-          newDocs.splice(index, 1)
+        const newDocs = { ...docs }
+        if (['create', 'update'].includes(e.action)) {
+          newDocs[e.record.id] = e.record
+        } else if (e.action === 'delete') {
+          delete newDocs[e.record.id]
         }
         setDocuments(newDocs)
       },
@@ -137,7 +149,7 @@ export function useSyncDocuments() {
 
     return () => {
       pb.collection('documents').unsubscribe('*')
-      setDocuments([])
+      setDocuments({})
     }
   })
 }
@@ -147,7 +159,7 @@ export function useDocuments() {
 }
 
 export function useDocument(id: () => string) {
-  return memo(() => documents()?.find((d) => d.id === id()))
+  return memo(() => documents()?.[id()])
 }
 
 export function createDocument(data: Create<Collections.Documents>) {
