@@ -1,16 +1,16 @@
 import { html, state } from 'solit-html'
 import {
   createDocument,
-  deleteDocument,
   updateDocument,
   useDocument,
   myUser,
   useUsers,
 } from '../dataService'
-import { navigate, showAlert, showToast, withEventValue } from '../utils'
+import { navigate, showToast, withEventValue } from '../utils'
 import { until } from 'lit-html/directives/until.js'
 import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
+import { DeleteDocumentItem } from '../components/DeleteDocumentItem'
 
 export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const doc = id?.(false) ? useDocument(id) : null
@@ -38,31 +38,6 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
     }
   }
 
-  const handleDelete = async () => {
-    if (!id?.()) return
-    showAlert('Are you sure you want to delete this document?', {
-      header: 'Delete Document',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-        {
-          text: 'Delete',
-          role: 'destructive',
-          handler: async () => {
-            try {
-              await deleteDocument(id())
-              navigate('/', 'root')
-            } catch (err) {
-              showToast('Failed to delete document: ' + (err as Error).message)
-            }
-          },
-        },
-      ],
-    })
-  }
-
   return html`
     <ion-header>
       <ion-toolbar>
@@ -77,15 +52,16 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
           ${() =>
             doc &&
             doc?.()?.owner === myUser()?.id &&
-            html`
-              <ion-button
-                aria-label="Delete Document"
-                @click=${handleDelete}
-                color="danger"
+            html`<ion-button id="doc-form-more-options">
+              <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+              <ion-popover
+                trigger="doc-form-more-options"
+                alignment="end"
+                dismiss-on-select
               >
-                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-              </ion-button>
-            `}
+                <ion-list>${DeleteDocumentItem(id)}</ion-list>
+              </ion-popover>
+            </ion-button>`}
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -173,16 +149,16 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
           </ion-segment-content>
         </ion-segment-view>
       </form>
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button
-          aria-label="Save Document"
-          type="submit"
-          @click=${handleSubmit}
-          ?disabled=${invalid}
-        >
-          <ion-icon name="save"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
     </ion-content>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-buttons slot="end">
+          <ion-button color="primary" type="submit" @click=${handleSubmit}>
+            <ion-icon slot="start" name="save-outline"></ion-icon>
+            Save
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-footer>
   `
 }

@@ -1,6 +1,7 @@
 import { html } from 'solit-html'
-import { useDocument } from '../dataService'
+import { myUser, useDocument } from '../dataService'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
+import { DeleteDocumentItem } from '../components/DeleteDocumentItem'
 
 export function DocumentView({ id }: { id: () => string }) {
   const doc = useDocument(id)
@@ -12,18 +13,29 @@ export function DocumentView({ id }: { id: () => string }) {
           <ion-back-button default-href="/"></ion-back-button>
         </ion-buttons>
         <ion-title>${() => doc()?.title ?? 'Loading...'}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button id="doc-more-options">
+            <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+          </ion-button>
+          <ion-popover
+            trigger="doc-more-options"
+            alignment="end"
+            dismiss-on-select
+          >
+            ${doc()?.owner === myUser()?.id &&
+            html`<ion-list>
+              <ion-item button href=${() => `/${id()}/edit`}>
+                <ion-icon slot="start" name="create-outline"></ion-icon>
+                <ion-label>Edit Document</ion-label>
+              </ion-item>
+              ${DeleteDocumentItem(id)}
+            </ion-list>`}
+          </ion-popover>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
       ${MarkdownDisplay(() => doc()?.content ?? '')}
-      <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-        <ion-fab-button
-          aria-label="Edit Document"
-          href=${() => `/${id()}/edit`}
-        >
-          <ion-icon name="create-outline"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
     </ion-content>
   `
 }
