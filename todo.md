@@ -28,6 +28,7 @@
   - [x] User name (and show in shared document list)
   - [ ] Change email and password
 - [ ] Responsive design using fixed width ion-grid
+- [ ] Make sure logout is working reliably
 
 ## Someday
 
@@ -49,10 +50,11 @@
 - [ ] Search query syntax (and, or, title, content, exact, starts with, created before/after etc.)
   - [ ] Saved queries (either as home view filters and/or embeddable in documents?)
 - [ ] Lookup and automatically link documents in editor
-- [ ] Syntax to embed documents within documents (yo dawg I heard you like documents...)
+- [x] Syntax to embed documents within documents (yo dawg I heard you like documents...)
 - [ ] Table styles in markdown
 - [x] Show found text in search results list with context and highlights
 - [ ] Download document as markdown file
+- [ ] Image uploads in editor
 
 ## Polish
 
@@ -66,6 +68,7 @@
 - [ ] Better empty state for document view with no content
 - [ ] More sharing info in document view (who has access, avatars?)
 - [ ] Hide markdown in search result snippets?
+- [ ] Show user avatars in share input?
 
 ## DX
 

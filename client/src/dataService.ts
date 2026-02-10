@@ -64,6 +64,13 @@ export const useUsers = () => {
   })
 }
 
+export const getUserAvatarUrl = (user: Pick<UsersRecord, 'avatar'>) => {
+  if (user.avatar) {
+    return pb.files.getURL(user, user.avatar)
+  }
+  return 'https://ionicframework.com/docs/img/demos/avatar.svg'
+}
+
 // Document management --------------------------------------------------------
 // For now, state management strategy is:
 // * Keep a global list of all documents in memory

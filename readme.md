@@ -14,6 +14,8 @@ This will probably not be the last in a long list of very similar apps I promptl
 
 ## Features
 
+* Embed other documents within documents using a variant of the markdown link syntax `[!embed](/document-id)`.
+
 TODO
 
 ## Tech stack
