@@ -22,7 +22,7 @@
   - [x] Preview mode (rendered markdown)
 - [x] Delete documents
 - [x] Share documents with other users
-  - [ ] Show sharing info
+  - [x] Show sharing info
 - [ ] Reminders as push notifications
 - [x] User profile (avatar, visibility etc.)
   - [x] User name (and show in shared document list)
@@ -51,7 +51,8 @@
 - [ ] Lookup and automatically link documents in editor
 - [ ] Syntax to embed documents within documents (yo dawg I heard you like documents...)
 - [ ] Table styles in markdown
-- [ ] Show found text in search results list with context and highlights
+- [x] Show found text in search results list with context and highlights
+- [ ] Download document as markdown file
 
 ## Polish
 
@@ -62,6 +63,9 @@
 - [ ] If user hides their profile after having documents shared with them, what then?
 - [ ] Show user avatar for user menu button
 - [ ] Segment buttons (tabs) don't look great with M3 overrides
+- [ ] Better empty state for document view with no content
+- [ ] More sharing info in document view (who has access, avatars?)
+- [ ] Hide markdown in search result snippets?
 
 ## DX
 

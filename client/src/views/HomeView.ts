@@ -8,6 +8,7 @@ import {
 } from '../dataService'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { relativeTimeFromNow, withEventValue } from '../utils'
+import { nothing } from 'lit-html'
 
 export function HomeView() {
   const documents = useDocuments()
@@ -29,6 +30,11 @@ export function HomeView() {
           if (!docs) {
             return html`<ion-item><ion-spinner></ion-spinner></ion-item>`
           }
+          if (searchQuery() && !docs.length) {
+            return html`<ion-item>
+              No documents found for "${searchQuery()}".
+            </ion-item>`
+          }
           if (docs.length === 0) {
             return html`<ion-item>
               No documents yet. Click the + button to add one.
@@ -48,12 +54,30 @@ export function HomeView() {
 
 function DocumentItem(doc: Document) {
   const isShared = !!doc.shared.length
+  const noteContent = () => {
+    const search = searchQuery()
+    // Display a snippet of the content if it's a search result, highlighting the search term
+    if (search) {
+      const notesStart = doc.content.toLowerCase().indexOf(search.toLowerCase())
+      if (notesStart === -1) return nothing
+
+      const notesEnd = notesStart + search.length
+      return html`<p>
+        ${!!notesStart && '...'}
+        <mark>${doc.content.slice(notesStart, notesEnd)}</mark
+        >${doc.content.slice(notesEnd)}
+      </p>`
+    }
+    // If it's not a search result, display the relative update time for shared documents
+    if (isShared) {
+      return html`<p>Updated ${relativeTimeFromNow(doc.updated)}</p>`
+    }
+    return nothing
+  }
+
   return html`
     <ion-item button href=${doc.id}>
-      <ion-label>
-        ${doc.title}
-        ${isShared && html`<p>Updated ${relativeTimeFromNow(doc.updated)}</p>`}
-      </ion-label>
+      <ion-label> ${doc.title} ${noteContent} </ion-label>
     </ion-item>
   `
 }
