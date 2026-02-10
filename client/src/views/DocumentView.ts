@@ -22,14 +22,13 @@ export function DocumentView({ id }: { id: () => string }) {
             alignment="end"
             dismiss-on-select
           >
-            ${doc()?.owner === myUser()?.id &&
-            html`<ion-list>
+            <ion-list>
               <ion-item button href=${() => `/${id()}/edit`}>
                 <ion-icon slot="start" name="create-outline"></ion-icon>
                 <ion-label>Edit Document</ion-label>
               </ion-item>
-              ${DeleteDocumentItem(id)}
-            </ion-list>`}
+              ${doc()?.owner === myUser()?.id && DeleteDocumentItem(id)}
+            </ion-list>
           </ion-popover>
         </ion-buttons>
       </ion-toolbar>
