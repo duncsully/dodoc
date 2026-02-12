@@ -156,7 +156,7 @@ export function useSyncDocuments() {
 
     return () => {
       pb.collection('documents').unsubscribe('*')
-      setDocuments({})
+      setDocuments(null)
     }
   })
 }
