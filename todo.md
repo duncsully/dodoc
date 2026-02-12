@@ -28,7 +28,7 @@
   - [x] User name (and show in shared document list)
   - [ ] Change email and password
 - [ ] Responsive design using fixed width ion-grid
-- [ ] Make sure logout is working reliably
+- [x] Make sure logout is working reliably
 
 ## Someday
 
@@ -69,6 +69,8 @@
 - [ ] More sharing info in document view (who has access, avatars?)
 - [ ] Hide markdown in search result snippets?
 - [ ] Show user avatars in share input?
+- [ ] Style hrs?
+- [ ] Render details-summary as accordion?
 
 ## DX
 
