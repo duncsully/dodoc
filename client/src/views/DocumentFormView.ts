@@ -115,15 +115,26 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
                     </ion-select-option>`
                   )}
                 </ion-select>
+                <!-- <ion-label>Remind me</ion-label>
+                <ion-datetime-button datetime="datetime"></ion-datetime-button>
+                <ion-modal>
+                  <ion-datetime
+                    id="datetime"
+                    color="primary"
+                    show-adjacent-days
+                  ></ion-datetime>
+                </ion-modal> -->
               `
-            : html` <ion-text><h2>${title()}</h2></ion-text>
+            : html`
+                <ion-text><h2>${title()}</h2></ion-text>
                 <ion-note>
                   Shared by
                   ${doc()?.expand.owner.name || doc()?.expand.owner.email}
-                </ion-note>`}
+                </ion-note>
+              `}
 
         <!-- TODO: The M3 overrides messes with the segment button styles -->
-        <ion-segment color="tertiary">
+        <ion-segment color="primary">
           <ion-segment-button value="editor" content-id="editor">
             <ion-label>Editor</ion-label>
           </ion-segment-button>
@@ -131,7 +142,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
             <ion-label>Preview</ion-label>
           </ion-segment-button>
         </ion-segment>
-        <ion-segment-view>
+        <ion-segment-view style="gap: 16px;">
           <ion-segment-content id="editor" class="ion-padding-top">
             <ion-textarea
               label="Content"

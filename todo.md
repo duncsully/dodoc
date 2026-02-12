@@ -32,6 +32,7 @@
 
 ## Someday
 
+- [ ] Recurring reminders
 - [ ] Local-only docs and/or end-to-end encryption?
 - [ ] PWA
 - [ ] Offline support~
@@ -55,6 +56,8 @@
 - [x] Show found text in search results list with context and highlights
 - [ ] Download document as markdown file
 - [ ] Image uploads in editor
+- [ ] Per user document notification settings
+  - [ ] Notify shared users when a document is updated option
 
 ## Polish
 
@@ -64,13 +67,14 @@
 - [ ] Better error handling in login forms?
 - [ ] If user hides their profile after having documents shared with them, what then?
 - [ ] Show user avatar for user menu button
-- [ ] Segment buttons (tabs) don't look great with M3 overrides
+- [ ] Segment buttons (tabs) don't look great with M3 overrides (currently not using)
 - [ ] Better empty state for document view with no content
 - [ ] More sharing info in document view (who has access, avatars?)
 - [ ] Hide markdown in search result snippets?
 - [ ] Show user avatars in share input?
 - [ ] Style hrs?
 - [ ] Render details-summary as accordion?
+- [ ] Style datetime pickers to match theme
 
 ## DX
 
