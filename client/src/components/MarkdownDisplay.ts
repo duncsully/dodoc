@@ -18,12 +18,20 @@ export function MarkdownDisplay(content: () => string) {
   return html`${htmlContent}`
 }
 
-const expandEmbeddedDocs = (markdown: string): string => {
+/**
+ * Recursively expand embedded documents in the markdown content using the [!embed](href) syntax.
+ * Will only embed documents that haven't already been embedded to prevent infinite loops.
+ */
+const expandEmbeddedDocs = (
+  markdown: string,
+  embedded = new Set<string>()
+): string => {
   return markdown.replace(/\[!embed\]\(\/?(.+)\)/g, (original, href) => {
     const doc = useDocument(() => href)
-    if (!doc()) {
+    if (!doc() || embedded.has(href)) {
       return original
     }
-    return expandEmbeddedDocs(doc()?.content ?? '')
+    embedded.add(href)
+    return expandEmbeddedDocs(doc()?.content ?? '', embedded)
   })
 }
