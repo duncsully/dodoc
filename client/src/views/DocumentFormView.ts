@@ -1,4 +1,4 @@
-import { html, state } from 'solit-html'
+import { html, state, urlState } from 'solit-html'
 import {
   createDocument,
   updateDocument,
@@ -10,14 +10,23 @@ import { navigate, showToast, withEventValue } from '../utils'
 import { until } from 'lit-html/directives/until.js'
 import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
-import { DeleteDocumentItem } from '../components/DeleteDocumentItem'
+import { DocumentOptionsButton } from '../components/DocumentOptionsButton'
 
+// TODO: The form should be split to accept props for each field, handling state in parent
+// and then the parent should handle the create/copy/update logic.
 export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const doc = id?.(false) ? useDocument(id) : null
 
-  const [title, setTitle] = state(doc?.()?.title ?? '')
+  // If copyId is present, we're copying an existing document, but treating it as a
+  // new document.
+  const [copyId] = urlState('copy', '')
+  const copyDoc = copyId?.(false) ? useDocument(copyId) : null
+
+  const [title, setTitle] = state(doc?.()?.title ?? copyDoc?.()?.title ?? '')
   const [shared, setShared] = state<string[]>(doc?.()?.shared ?? [])
-  const [content, setContent] = state(doc?.()?.content ?? '')
+  const [content, setContent] = state(
+    doc?.()?.content ?? copyDoc?.()?.content ?? ''
+  )
   const invalid = () => !title().trim().length
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -49,19 +58,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         </ion-buttons>
         <ion-title>${() => (doc ? 'Edit Document' : 'New Document')}</ion-title>
         <ion-buttons slot="end">
-          ${() =>
-            doc &&
-            doc?.()?.owner === myUser()?.id &&
-            html`<ion-button id="doc-form-more-options" color="primary">
-              <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
-              <ion-popover
-                trigger="doc-form-more-options"
-                alignment="end"
-                dismiss-on-select
-              >
-                <ion-list>${DeleteDocumentItem(id)}</ion-list>
-              </ion-popover>
-            </ion-button>`}
+          ${() => id?.() && DocumentOptionsButton({ id })}
         </ion-buttons>
       </ion-toolbar>
     </ion-header>

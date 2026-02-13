@@ -45,7 +45,7 @@
 - [ ] Archive documents (only findable via "show archived" filter)
 - [ ] MD extensions
 - [ ] Soft delete with undo, cron job to purge
-- [ ] Copy document (e.g. for templates, or offline edits before conflict resolution)
+- [x] Copy document (e.g. for templates, or offline edits before conflict resolution)
 - [ ] Decline shared document^
 - [ ] Tags for documents@
 - [ ] Search query syntax (and, or, title, content, exact, starts with, created before/after etc.)
@@ -58,6 +58,7 @@
 - [ ] Image uploads in editor
 - [ ] Per user document notification settings
   - [ ] Notify shared users when a document is updated option
+- [ ] Combined details and edit view?
 
 ## Polish
 
