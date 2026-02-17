@@ -59,6 +59,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         <ion-buttons slot="start">
           <ion-back-button
             default-href=${() => (id ? `/${id()}` : '/')}
+            icon="close"
           ></ion-back-button>
         </ion-buttons>
         <ion-buttons slot="end">
@@ -170,7 +171,12 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
     <ion-footer>
       <ion-toolbar>
         <ion-buttons slot="end">
-          <ion-button color="primary" type="submit" @click=${handleSubmit}>
+          <ion-button
+            color="primary"
+            type="submit"
+            @click=${handleSubmit}
+            disabled=${invalid}
+          >
             <ion-icon slot="start" name="save-outline"></ion-icon>
             Save
           </ion-button>
