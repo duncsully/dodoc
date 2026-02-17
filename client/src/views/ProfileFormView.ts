@@ -95,6 +95,7 @@ export function ProfileFormView() {
               checked=${emailVisibility}
               @ionChange=${(e: IonToggleCustomEvent<ToggleChangeEventDetail>) =>
                 setEmailVisibility(e.detail.checked)}
+              color="primary"
             >
               <ion-label>Make profile public</ion-label>
               <ion-note>Lets other users share documents with you</ion-note>
