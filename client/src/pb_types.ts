@@ -12,6 +12,8 @@ export enum Collections {
 	Otps = "_otps",
 	Superusers = "_superusers",
 	Documents = "documents",
+	KeyValues = "key_values",
+	PushSubscriptions = "push_subscriptions",
 	Users = "users",
 }
 
@@ -103,6 +105,22 @@ export type DocumentsRecord = {
 	updated: IsoAutoDateString
 }
 
+export type KeyValuesRecord = {
+	created: IsoAutoDateString
+	id: string
+	public?: boolean
+	updated: IsoAutoDateString
+	value: string
+}
+
+export type PushSubscriptionsRecord<Tsubscription = unknown> = {
+	created: IsoAutoDateString
+	id: string
+	subscription: null | Tsubscription
+	updated: IsoAutoDateString
+	user: RecordIdString
+}
+
 export type UsersRecord = {
 	avatar?: FileNameString
 	created: IsoAutoDateString
@@ -123,6 +141,8 @@ export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemF
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type DocumentsResponse<Texpand = unknown> = Required<DocumentsRecord> & BaseSystemFields<Texpand>
+export type KeyValuesResponse<Texpand = unknown> = Required<KeyValuesRecord> & BaseSystemFields<Texpand>
+export type PushSubscriptionsResponse<Tsubscription = unknown, Texpand = unknown> = Required<PushSubscriptionsRecord<Tsubscription>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -134,6 +154,8 @@ export type CollectionRecords = {
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
 	documents: DocumentsRecord
+	key_values: KeyValuesRecord
+	push_subscriptions: PushSubscriptionsRecord
 	users: UsersRecord
 }
 
@@ -144,6 +166,8 @@ export type CollectionResponses = {
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
 	documents: DocumentsResponse
+	key_values: KeyValuesResponse
+	push_subscriptions: PushSubscriptionsResponse
 	users: UsersResponse
 }
 
