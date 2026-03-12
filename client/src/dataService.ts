@@ -71,6 +71,18 @@ export const getUserAvatarUrl = (user: Pick<UsersRecord, 'avatar'>) => {
   return 'https://ionicframework.com/docs/img/demos/avatar.svg'
 }
 
+export const registerPushSubscription = (subscription: PushSubscription) => {
+  return pb.collection('push_subscriptions').create({
+    user: pb.authStore.record?.id,
+    subscription: subscription.toJSON(),
+  })
+}
+
+export const getVapidKey = async () => {
+  const record = await pb.collection('key_values').getOne('vapid_public_key')
+  return record.value
+}
+
 // Document management --------------------------------------------------------
 // For now, state management strategy is:
 // * Keep a global list of all documents in memory

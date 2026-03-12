@@ -6,7 +6,12 @@ import {
   myUser,
   useUsers,
 } from '../dataService'
-import { navigate, showToast, withEventValue } from '../utils'
+import {
+  navigate,
+  registerPushNotifications,
+  showToast,
+  withEventValue,
+} from '../utils'
 import { until } from 'lit-html/directives/until.js'
 import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
@@ -122,7 +127,12 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
         <ion-list inset>
           <!-- <ion-item>
             <ion-label>Remind me</ion-label>
-            <ion-datetime-button datetime="datetime"></ion-datetime-button>
+            <ion-datetime-button
+              datetime="datetime"
+              @click=${() => {
+            registerPushNotifications()
+          }}
+            ></ion-datetime-button>
           </ion-item>
           <ion-modal>
             <ion-datetime

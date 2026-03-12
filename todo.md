@@ -24,6 +24,11 @@
 - [x] Share documents with other users
   - [x] Show sharing info
 - [ ] Reminders as push notifications
+  - [x] Generate VAPID keys and send public one
+  - [x] Request permission in UI and save data to DB
+  - [ ] Table for reminders
+  - [ ] UI to set a reminder datetime
+  - [ ] Server job to check for reminders, send notifications
 - [x] User profile (avatar, visibility etc.)
   - [x] User name (and show in shared document list)
   - [ ] Change email and password
@@ -34,7 +39,7 @@
 
 - [ ] Recurring reminders
 - [ ] Local-only docs and/or end-to-end encryption?
-- [ ] PWA
+- [ ] PWA (would want to move service worker registration)
 - [ ] Offline support~
   - [ ] Service worker load updates in background
 - [ ] Android app
@@ -77,6 +82,8 @@
 - [ ] Style hrs?
 - [ ] Render details-summary as accordion?
 - [ ] Style datetime pickers to match theme
+- [ ] Push permission handling%
+- [ ] Cancel notifications on all other devices after clicking on one device?
 
 ## DX
 
@@ -91,3 +98,5 @@
 ^ Might need to wait until permission table instead of shared multi-select field so that I can more easily give a user the auth to delete their record for a shared document. Might also want to inform user when a document has been shared with them and let them accept/decline.
 
 @ For the time being, full text search allows user-implemented tags using their own syntax like @tag. I'll revisit implementing tags as a first-class feature after I understand this approach's limitations.
+
+% I could signalize whether the browser currently has push permissions and use that to update the UI. If we don't have permission yet, we'd likely want to display a little info dialog to the user explaining that we need permission in order for reminders to work (in the webapp) and that they'll need to accept the prompt, otherwise we don't let them continue setting a reminder.

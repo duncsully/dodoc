@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   optimizeDeps: {
@@ -24,6 +25,19 @@ export default defineConfig({
           dest: '',
         },
       ],
+    }),
+    VitePWA({
+      srcDir: 'src',
+      filename: 'service-worker.js',
+      strategies: 'injectManifest',
+      injectRegister: false,
+      manifest: false,
+      injectManifest: {
+        injectionPoint: undefined,
+      },
+      devOptions: {
+        enabled: true,
+      },
     }),
   ],
 })

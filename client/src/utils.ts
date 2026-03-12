@@ -7,6 +7,7 @@ import {
 } from '@ionic/core'
 import { render, type TemplateResult } from 'lit-html'
 import { signal } from 'solit-html'
+import { getVapidKey, registerPushSubscription } from './dataService'
 
 /**
  * Factory to create event handlers that extract the value from input events,
@@ -110,4 +111,31 @@ export function relativeTimeFromNow(date: Date | string) {
     }
   }
   return 'just now'
+}
+
+export const registerPushNotifications = async () => {
+  try {
+    await Notification.requestPermission()
+    const registration = await navigator.serviceWorker.register(
+      import.meta.env.MODE === 'production'
+        ? '/service-worker.js'
+        : '/dev-sw.js?dev-sw'
+    )
+
+    const existingSubscription =
+      await registration.pushManager.getSubscription()
+    if (existingSubscription) {
+      return
+    }
+
+    const vapidKey = await getVapidKey()
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: vapidKey,
+    })
+
+    return await registerPushSubscription(subscription)
+  } catch (err) {
+    console.error(err)
+  }
 }
