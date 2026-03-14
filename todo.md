@@ -26,9 +26,10 @@
 - [ ] Reminders as push notifications
   - [x] Generate VAPID keys and send public one
   - [x] Request permission in UI and save data to DB
-  - [ ] Table for reminders
+  - [x] Table for reminders
   - [ ] UI to set a reminder datetime
   - [ ] Server job to check for reminders, send notifications
+  - [ ] Remove subscription if rejected?
 - [x] User profile (avatar, visibility etc.)
   - [x] User name (and show in shared document list)
   - [ ] Change email and password
@@ -38,6 +39,7 @@
 ## Someday
 
 - [ ] Recurring reminders
+  - [ ] Multiple recurring reminders?+
 - [ ] Local-only docs and/or end-to-end encryption?
 - [ ] PWA (would want to move service worker registration)
 - [ ] Offline support~
@@ -92,6 +94,7 @@
 - [ ] Bun instead of Node once supported on Windows ARM?
 - [ ] Typegen on hooks?
 - [ ] Export reactive getter type from solit-html
+- [ ] Use Tanstack DB
 
 ~ I could use Dexie or a local DB to cache documents offline, maybe readonly as a first step. Instead of fetching for all documents, the client could fetch only updated documents since last sync and update the local cache. On document view, it could load from local cache first, then update from server in background. In another iteration, I could support locally created documents that sync when back online. Finally, I could think about conflict resolution for supporting offline edits.
 
@@ -100,3 +103,5 @@
 @ For the time being, full text search allows user-implemented tags using their own syntax like @tag. I'll revisit implementing tags as a first-class feature after I understand this approach's limitations.
 
 % I could signalize whether the browser currently has push permissions and use that to update the UI. If we don't have permission yet, we'd likely want to display a little info dialog to the user explaining that we need permission in order for reminders to work (in the webapp) and that they'll need to accept the prompt, otherwise we don't let them continue setting a reminder.
+
++ Right now I have a unique index constraint on user + document determining that a user should only have one reminder configuration per document, and we'd likely get all of the recurrences we need within this single config, but maybe if that still ends up too limiting and we need something even more flexible we could allow setting up multiple reminder configs per document?

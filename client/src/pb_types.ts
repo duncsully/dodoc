@@ -14,6 +14,7 @@ export enum Collections {
 	Documents = "documents",
 	KeyValues = "key_values",
 	PushSubscriptions = "push_subscriptions",
+	Reminders = "reminders",
 	Users = "users",
 }
 
@@ -116,7 +117,16 @@ export type KeyValuesRecord = {
 export type PushSubscriptionsRecord<Tsubscription = unknown> = {
 	created: IsoAutoDateString
 	id: string
-	subscription: null | Tsubscription
+	subscription?: null | Tsubscription
+	updated: IsoAutoDateString
+	user: RecordIdString
+}
+
+export type RemindersRecord = {
+	created: IsoAutoDateString
+	document: RecordIdString
+	id: string
+	start: IsoDateString
 	updated: IsoAutoDateString
 	user: RecordIdString
 }
@@ -143,6 +153,7 @@ export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> &
 export type DocumentsResponse<Texpand = unknown> = Required<DocumentsRecord> & BaseSystemFields<Texpand>
 export type KeyValuesResponse<Texpand = unknown> = Required<KeyValuesRecord> & BaseSystemFields<Texpand>
 export type PushSubscriptionsResponse<Tsubscription = unknown, Texpand = unknown> = Required<PushSubscriptionsRecord<Tsubscription>> & BaseSystemFields<Texpand>
+export type RemindersResponse<Texpand = unknown> = Required<RemindersRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -156,6 +167,7 @@ export type CollectionRecords = {
 	documents: DocumentsRecord
 	key_values: KeyValuesRecord
 	push_subscriptions: PushSubscriptionsRecord
+	reminders: RemindersRecord
 	users: UsersRecord
 }
 
@@ -168,6 +180,7 @@ export type CollectionResponses = {
 	documents: DocumentsResponse
 	key_values: KeyValuesResponse
 	push_subscriptions: PushSubscriptionsResponse
+	reminders: RemindersResponse
 	users: UsersResponse
 }
 
