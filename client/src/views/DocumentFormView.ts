@@ -33,7 +33,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
     doc?.()?.content ?? copyDoc?.()?.content ?? ''
   )
 
-  const [editingContent, setEditingContent] = state(!id?.(false))
+  const [editingContent, setEditingContent] = state(true)
   const invalid = () => !title().trim().length
 
   const isSharedDoc = memo(
@@ -98,7 +98,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
 
         <ion-list inset>
           <ion-list-header>
-            <ion-label>Content</ion-label>
+            <ion-label>Markdown content</ion-label>
             <ion-button
               @click=${() => setEditingContent(!editingContent(false))}
             >
@@ -115,12 +115,11 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
                       .value=${content}
                       @ionInput=${withEventValue(setContent)}
                       spellcheck
-                      helper-text="Markdown supported"
                       autofocus
                     ></ion-textarea>
                   </ion-item>
                 `
-              : html`<div class="ion-padding">
+              : html`<div class="ion-padding-horizontal ion-padding-bottom">
                   ${MarkdownDisplay(content)}
                 </div>`}
         </ion-list>

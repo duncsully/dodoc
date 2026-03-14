@@ -67,6 +67,8 @@
   - [ ] Owner option to sync shared users, and shared users can opt out after being synced
   - [ ] Notify shared users when a document is updated option
 - [ ] Combined details and edit view?
+- [ ] Auto save?
+- [ ] MD cheat sheet?
 
 ## Polish
 
