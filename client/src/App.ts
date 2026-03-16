@@ -1,6 +1,6 @@
 import { html } from 'solit-html'
 import './style.css'
-import { isLoggedIn, useSyncDocuments } from './dataService'
+import { isLoggedIn } from './dataService'
 import { LoginView } from './views/LoginView'
 import './theme/md3/theme.css'
 import { HomeView } from './views/HomeView'
@@ -33,7 +33,6 @@ const routeElements = Object.entries(routes).map(([path, component]) => {
 })
 
 function AuthenticatedApp() {
-  useSyncDocuments()
   return html`
     <ion-router .useHash=${false}>${routeElements}</ion-router>
     <ion-router-outlet></ion-router-outlet>

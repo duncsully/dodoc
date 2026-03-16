@@ -22,9 +22,9 @@ export function DocumentView({ id }: { id: () => string }) {
           <ion-buttons slot="start">
             <ion-back-button default-href="/"></ion-back-button>
           </ion-buttons>
-          <ion-title>${() => document.title}</ion-title>
+          <ion-title>${document.title}</ion-title>
           <ion-buttons slot="end">
-            ${() => DocumentOptionsButton({ id, showEdit: true })}
+            ${DocumentOptionsButton({ id, showEdit: true })}
           </ion-buttons>
         </ion-toolbar>
       </ion-header>

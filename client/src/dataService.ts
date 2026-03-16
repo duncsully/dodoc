@@ -1,20 +1,34 @@
-// Abstraction for all data fetching and mutations
-
 import Pocketbase from 'pocketbase'
-import type {
-  TypedPocketBase,
-  Update,
+import {
+  type TypedPocketBase,
+  type Update,
   Collections,
-  Create,
-  UsersRecord,
-  DocumentsResponse,
+  type Create,
+  type UsersRecord,
+  type DocumentsResponse,
+  type UsersResponse,
+  type RemindersResponse,
+  type CollectionResponses,
 } from './pb_types'
-import { effect, memo, state } from 'solit-html'
+import { memo, state, watch } from 'solit-html'
+
+/**
+ * About data management
+ *
+ * This module's intention is to abstract data fetching and mutations from the client.
+ *
+ * It uses an approach similar to Tanstack DB in that the various tables are fully loaded
+ * into record signals at the module level, which are loaded and unloaded when the user logs
+ * in and out respectively. Various other state is derived from these signals as needed,
+ * such as a sorted and filtered documents list.
+ */
 
 const pbBaseUrl = import.meta.env.DEV
   ? 'http://127.0.0.1:8090'
   : window.location.origin
 const pb = new Pocketbase(pbBaseUrl) as TypedPocketBase
+
+// Auth and users -------------------------------------------------------------
 
 const [_isLoggedIn, setIsLoggedIn] = state(false)
 pb.authStore.onChange(() => {
@@ -57,12 +71,55 @@ export const myAvatarUrl = () => {
   return 'https://ionicframework.com/docs/img/demos/avatar.svg'
 }
 
-export const useUsers = () => {
-  return pb.collection('users').getFullList({
-    sort: 'email',
-    filter: `emailVisibility=true && id!="${pb.authStore.record?.id}"`,
+// The Tanstack DB we have at home
+/**
+ * Create a signal for a PocketBase collection as a record of IDs to rows
+ * @param collection
+ * @returns
+ */
+function collectionSignal<T extends Collections>(collection: T) {
+  const [data, setData] = state<Record<string, CollectionResponses[T]> | null>(
+    null
+  )
+
+  watch(() => {
+    if (isLoggedIn()) {
+      pb.collection(collection)
+        .getFullList()
+        .then((newData) => {
+          setData(Object.fromEntries(newData.map((item) => [item.id, item])))
+        })
+      pb.collection(collection).subscribe('*', (e) => {
+        const current = data(false) ?? {}
+
+        const newData = { ...current }
+        if (['create', 'update'].includes(e.action)) {
+          newData[e.record.id] = e.record
+        } else if (e.action === 'delete') {
+          delete newData[e.record.id]
+        }
+        setData(newData)
+      })
+    } else {
+      pb.collection(collection).unsubscribe('*')
+      setData(null)
+    }
   })
+
+  return data
 }
+
+const documents = collectionSignal(Collections.Documents)
+const visibleUsers = collectionSignal(Collections.Users)
+const reminders = collectionSignal(Collections.Reminders)
+
+export const users = memo(() => {
+  const users = visibleUsers()
+  if (!users) return undefined
+  return Object.values(users).filter(
+    (user) => user.id !== pb.authStore.record?.id
+  )
+})
 
 export const getUserAvatarUrl = (user: Pick<UsersRecord, 'avatar'>) => {
   if (user.avatar) {
@@ -84,26 +141,32 @@ export const getVapidKey = async () => {
 }
 
 // Document management --------------------------------------------------------
-// For now, state management strategy is:
-// * Keep a global list of all documents in memory
-// * Do initial load when useSyncDocuments is first called
-// * Also subscribe to changes and remain subscribed while app is running
 
-type DocumentExpand = {
-  owner: Pick<UsersRecord, 'id' | 'name' | 'email'>
+/**
+ * Document type with owner and reminder relationships
+ */
+export type Document = Omit<DocumentsResponse, 'owner' | 'reminder'> & {
+  owner?: UsersResponse
+  reminder?: RemindersResponse
 }
-type DocumentWithExpand = DocumentsResponse<DocumentExpand>
 
-// Alias for external usage
-export type Document = DocumentWithExpand
-
-const [documents, setDocuments] = state<Record<
-  string,
-  DocumentWithExpand
-> | null>(null)
+const fullDocuments = memo(() => {
+  return Object.fromEntries(
+    Object.entries(documents() ?? {}).map(([id, doc]) => [
+      id,
+      {
+        ...doc,
+        owner: visibleUsers()?.[doc.owner],
+        reminder: Object.values(reminders() ?? {}).find(
+          (r) => r.document === doc.id
+        ),
+      } satisfies Document,
+    ])
+  )
+})
 
 const sortedDocuments = memo(() =>
-  Object.values(documents() ?? {}).sort((a, b) => {
+  Object.values(fullDocuments()).sort((a, b) => {
     return new Date(b.updated).getTime() - new Date(a.updated).getTime()
   })
 )
@@ -125,60 +188,12 @@ const visibleDocuments = memo(() => {
   })
 })
 
-/**
- * Loads all documents and keeps them in sync via realtime subscriptions.
- * Should be called once after authenticating.
- */
-export function useSyncDocuments() {
-  if (!documents(false)) {
-    pb.collection('documents')
-      .getFullList<DocumentWithExpand>({
-        sort: '-created',
-        expand: 'owner',
-        fields: '*,expand.owner.id,expand.owner.name,expand.owner.email',
-      })
-      .then((docs) => {
-        const docsById = docs.reduce((acc, doc) => {
-          acc[doc.id] = doc
-          return acc
-        }, {} as Record<string, DocumentWithExpand>)
-        setDocuments(docsById)
-      })
-  }
-
-  effect(function subscribeToDocuments() {
-    pb.collection('documents').subscribe<DocumentWithExpand>(
-      '*',
-      (e) => {
-        const docs = documents(false) ?? {}
-
-        const newDocs = { ...docs }
-        if (['create', 'update'].includes(e.action)) {
-          newDocs[e.record.id] = e.record
-        } else if (e.action === 'delete') {
-          delete newDocs[e.record.id]
-        }
-        setDocuments(newDocs)
-      },
-      {
-        expand: 'owner',
-        fields: '*,expand.owner.id,expand.owner.name,expand.owner.email',
-      }
-    )
-
-    return () => {
-      pb.collection('documents').unsubscribe('*')
-      setDocuments(null)
-    }
-  })
-}
-
 export function useDocuments() {
   return visibleDocuments
 }
 
 export function useDocument(id: () => string) {
-  return memo(() => documents()?.[id()])
+  return memo(() => fullDocuments()?.[id()])
 }
 
 export function createDocument(data: Create<Collections.Documents>) {

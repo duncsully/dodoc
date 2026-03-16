@@ -30,7 +30,7 @@ export function DocumentOptionsButton({
           <ion-icon slot="start" name="copy-outline"></ion-icon>
           <ion-label>Copy</ion-label>
         </ion-item>
-        ${doc()?.owner === myUser()?.id && DeleteDocumentItem(id)}
+        ${doc()?.owner?.id === myUser()?.id && DeleteDocumentItem(id)}
       </ion-list>
     </ion-popover>`
 }

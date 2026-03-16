@@ -96,7 +96,6 @@
 - [ ] Bun instead of Node once supported on Windows ARM?
 - [ ] Typegen on hooks?
 - [ ] Export reactive getter type from solit-html
-- [ ] Use Tanstack DB
 
 ~ I could use Dexie or a local DB to cache documents offline, maybe readonly as a first step. Instead of fetching for all documents, the client could fetch only updated documents since last sync and update the local cache. On document view, it could load from local cache first, then update from server in background. In another iteration, I could support locally created documents that sync when back online. Finally, I could think about conflict resolution for supporting offline edits.
 

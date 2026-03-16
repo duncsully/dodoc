@@ -4,7 +4,7 @@ import {
   updateDocument,
   useDocument,
   myUser,
-  useUsers,
+  users,
 } from '../dataService'
 import {
   navigate,
@@ -12,7 +12,6 @@ import {
   showToast,
   withEventValue,
 } from '../utils'
-import { until } from 'lit-html/directives/until.js'
 import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
 import { DocumentOptionsButton } from '../components/DocumentOptionsButton'
@@ -37,7 +36,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const invalid = () => !title().trim().length
 
   const isSharedDoc = memo(
-    () => !!doc && doc()?.owner !== myUser()?.id && !copyDoc
+    () => !!doc && doc()?.owner?.id !== myUser()?.id && !copyDoc
   )
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -86,10 +85,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
               disabled=${isSharedDoc}
               helper-text=${() =>
                 isSharedDoc()
-                  ? `Shared by ${
-                      doc?.()?.expand.owner?.name ||
-                      doc?.()?.expand.owner?.email
-                    }`
+                  ? `Shared by ${doc?.()?.owner?.name || doc?.()?.owner?.email}`
                   : undefined}
             >
             </ion-input>
@@ -149,29 +145,29 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
               @ionChange=${(e: IonSelectCustomEvent<SelectChangeEventDetail>) =>
                 setShared(e.detail.value)}
             >
-              ${until(
-                useUsers().then((users) => {
-                  if (users.length === 0) {
-                    return html`<ion-select-option disabled>
-                      No users available
-                    </ion-select-option>`
-                  }
-                  return users.map(
-                    (user) => html`
-                      <ion-select-option
-                        value=${user.id}
-                        disabled=${() =>
-                          isSharedDoc() && user.id == doc?.()?.owner}
-                      >
-                        ${user.name || user.email}
-                      </ion-select-option>
-                    `
-                  )
-                }),
-                html`<ion-select-option disabled>
-                  Loading users...
-                </ion-select-option>`
-              )}
+              ${() => {
+                const options = users()
+                if (!options)
+                  return html`<ion-select-option disabled>
+                    Loading users...
+                  </ion-select-option>`
+                if (options.length === 0) {
+                  return html`<ion-select-option disabled>
+                    No users available
+                  </ion-select-option>`
+                }
+                return options.map(
+                  (user) => html`
+                    <ion-select-option
+                      value=${user.id}
+                      disabled=${() =>
+                        isSharedDoc() && user.id === doc?.()?.owner?.id}
+                    >
+                      ${user.name || user.email}
+                    </ion-select-option>
+                  `
+                )
+              }}
             </ion-select>
           </ion-item>
         </ion-list>
