@@ -27,7 +27,7 @@
   - [x] Generate VAPID keys and send public one
   - [x] Request permission in UI and save data to DB
   - [x] Table for reminders
-  - [ ] UI to set a reminder datetime
+  - [x] UI to set a reminder datetime
   - [ ] Server job to check for reminders, send notifications
   - [ ] Remove subscription if rejected?
 - [x] User profile (avatar, visibility etc.)
@@ -69,6 +69,7 @@
 - [ ] Combined details and edit view?
 - [ ] Auto save?
 - [ ] MD cheat sheet?
+- [ ] More robust document-reminder saving
 
 ## Polish
 

@@ -196,17 +196,51 @@ export function useDocument(id: () => string) {
   return memo(() => fullDocuments()?.[id()])
 }
 
-export function createDocument(data: Create<Collections.Documents>) {
-  return pb
+async function setReminder(docId: string, reminder: string | null) {
+  const existingReminder = fullDocuments()?.[docId].reminder
+
+  if (!existingReminder && !reminder) {
+    return
+  }
+  const formattedReminder = reminder
+  if (!existingReminder && reminder) {
+    return await pb.collection('reminders').create({
+      document: docId,
+      start: formattedReminder,
+      user: pb.authStore.record?.id,
+    })
+  }
+  if (existingReminder && !reminder) {
+    return await pb.collection('reminders').delete(existingReminder.id)
+  }
+  if (existingReminder && existingReminder.start !== formattedReminder) {
+    return await pb
+      .collection('reminders')
+      .update(existingReminder.id, { start: formattedReminder })
+  }
+  // Not changed, do nothing
+}
+
+export async function createDocument(
+  data: Create<Collections.Documents> & { reminder: string | null }
+) {
+  const { reminder, ...docData } = data
+  const newDoc = await pb
     .collection('documents')
-    .create({ ...data, owner: pb.authStore.record?.id })
+    .create({ ...docData, owner: pb.authStore.record?.id })
+  await setReminder(newDoc.id, reminder)
+  return newDoc
 }
 
 export function updateDocument(
   id: string,
-  data: Update<Collections.Documents>
+  data: Update<Collections.Documents> & { reminder: string | null }
 ) {
-  return pb.collection('documents').update(id, data)
+  const { reminder, ...docData } = data
+  return Promise.all([
+    pb.collection('documents').update(id, docData),
+    setReminder(id, reminder),
+  ])
 }
 
 export function deleteDocument(id: string) {

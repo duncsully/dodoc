@@ -139,3 +139,19 @@ export const registerPushNotifications = async () => {
     console.error(err)
   }
 }
+
+export const isoUtcToLocal = (isoString: string | null) => {
+  if (!isoString) return null
+  const date = new Date(isoString)
+  // Fudge an ISO string without the timezone offset by just manually
+  // adjusting the time
+  return new Date(
+    date.getTime() - date.getTimezoneOffset() * 60000
+  ).toISOString()
+}
+
+export const isoLocalToUtc = (isoString: string | null) => {
+  if (!isoString) return null
+  // Date will already assume this is local time and convert to UTC
+  return new Date(isoString).toISOString()
+}

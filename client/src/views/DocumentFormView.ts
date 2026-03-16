@@ -7,12 +7,21 @@ import {
   users,
 } from '../dataService'
 import {
+  isoLocalToUtc,
+  isoUtcToLocal,
   navigate,
   registerPushNotifications,
   showToast,
   withEventValue,
 } from '../utils'
-import type { IonSelectCustomEvent, SelectChangeEventDetail } from '@ionic/core'
+import type {
+  CheckboxChangeEventDetail,
+  DatetimeChangeEventDetail,
+  IonCheckboxCustomEvent,
+  IonDatetimeCustomEvent,
+  IonSelectCustomEvent,
+  SelectChangeEventDetail,
+} from '@ionic/core'
 import { MarkdownDisplay } from '../components/MarkdownDisplay'
 import { DocumentOptionsButton } from '../components/DocumentOptionsButton'
 
@@ -31,6 +40,14 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const [content, setContent] = state(
     doc?.()?.content ?? copyDoc?.()?.content ?? ''
   )
+  let existingReminder = doc?.()?.reminder?.start ?? null
+  if (existingReminder) {
+    existingReminder = isoUtcToLocal(existingReminder)
+  }
+  // For display purposes, this ISO string is actually locally offset
+  // and needs to be converted to proper UTC before saving
+  const [reminderLocalDatetime, setReminderLocalDatetime] =
+    state(existingReminder)
 
   const [editingContent, setEditingContent] = state(true)
   const invalid = () => !title().trim().length
@@ -42,7 +59,12 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault()
     if (invalid()) return
-    const data = { title: title(), content: content(), shared: shared() }
+    const data = {
+      title: title(),
+      content: content(),
+      shared: shared(),
+      reminder: isoLocalToUtc(reminderLocalDatetime()),
+    }
 
     try {
       if (doc?.()?.id) {
@@ -120,22 +142,52 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
                 </div>`}
         </ion-list>
         <ion-list inset>
-          <!-- <ion-item>
-            <ion-label>Remind me</ion-label>
-            <ion-datetime-button
-              datetime="datetime"
-              @click=${() => {
-            registerPushNotifications()
-          }}
-            ></ion-datetime-button>
-          </ion-item>
-          <ion-modal>
-            <ion-datetime
-              id="datetime"
+          <ion-item>
+            <ion-checkbox
               color="primary"
-              show-adjacent-days
-            ></ion-datetime>
-          </ion-modal> -->
+              .checked=${() => !!reminderLocalDatetime()}
+              @ionChange=${(
+                e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>
+              ) => {
+                if (e.detail.checked) {
+                  setReminderLocalDatetime(
+                    existingReminder || isoUtcToLocal(new Date().toISOString())
+                  )
+                } else {
+                  setReminderLocalDatetime(null)
+                }
+              }}
+            >
+              Remind me
+            </ion-checkbox>
+          </ion-item>
+          ${() =>
+            reminderLocalDatetime() &&
+            html`<ion-item>
+                <ion-label>On</ion-label>
+                <ion-datetime-button
+                  datetime="datetime"
+                  @click=${() => {
+                    registerPushNotifications()
+                  }}
+                ></ion-datetime-button>
+              </ion-item>
+              <ion-modal keep-contents-mounted>
+                <ion-datetime
+                  id="datetime"
+                  color="primary"
+                  show-adjacent-days
+                  .value=${reminderLocalDatetime}
+                  @ionChange=${(
+                    e: IonDatetimeCustomEvent<DatetimeChangeEventDetail>
+                  ) =>
+                    setReminderLocalDatetime(
+                      (e.detail.value as string) || null
+                    )}
+                ></ion-datetime>
+              </ion-modal>`}
+        </ion-list>
+        <ion-list inset>
           <ion-item>
             <ion-select
               label="Collaborators"
