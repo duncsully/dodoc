@@ -60,6 +60,32 @@ func main() {
 		return nil
 	})
 
+	app.Cron().MustAdd("check reminders", "* * * * *", func() {
+		// Check for upcoming reminders and send notifications
+		// Compare start column minute matches the current minute
+		records, err := app.FindAllRecords("reminders", dbx.NewExp("strftime('%Y-%m-%d %H:%M', start) = strftime('%Y-%m-%d %H:%M', 'now')"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, record := range records {
+			userId := record.GetString("user")
+			documentId := record.GetString("document")
+			document, err := app.FindRecordById("documents", documentId)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			notif := &Notification{
+				Title: "Reminder",
+				Body:  document.GetString("title"),
+				Data:  NotificationData{DocID: documentId},
+			}
+			if err := sendPush(app, userId, notif); err != nil {
+				log.Println(err)
+			}
+		}
+	})
+
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		se.Router.POST("/api/test-notification", func(e *core.RequestEvent) error {
 			userId := e.Auth.Id

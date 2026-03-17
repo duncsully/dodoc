@@ -28,7 +28,7 @@
   - [x] Request permission in UI and save data to DB
   - [x] Table for reminders
   - [x] UI to set a reminder datetime
-  - [ ] Server job to check for reminders, send notifications
+  - [x] Server job to check for reminders, send notifications
   - [ ] Remove subscription if rejected?
 - [x] User profile (avatar, visibility etc.)
   - [x] User name (and show in shared document list)
