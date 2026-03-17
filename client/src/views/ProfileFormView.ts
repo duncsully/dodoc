@@ -1,5 +1,5 @@
 import { html, state } from 'solit-html'
-import { myAvatarUrl, myUser, updateUser } from '../dataService'
+import { myAvatarUrl, myUser, sendTestPush, updateUser } from '../dataService'
 import { showToast, withEventValue } from '../utils'
 import type { IonToggleCustomEvent, ToggleChangeEventDetail } from '@ionic/core'
 
@@ -89,7 +89,7 @@ export function ProfileFormView() {
             </ion-avatar>
           </ion-item>
           <ion-item>
-            <ion-toggle
+            <ion-checkbox
               name="emailVisibility"
               label-placement="start"
               checked=${emailVisibility}
@@ -99,10 +99,16 @@ export function ProfileFormView() {
             >
               <ion-label>Make profile public</ion-label>
               <ion-note>Lets other users share documents with you</ion-note>
-            </ion-toggle>
+            </ion-checkbox>
           </ion-item>
         </ion-list>
       </form>
+      <ion-list inset>
+        <ion-item button @click=${sendTestPush}>
+          Send test push notification
+          <ion-icon slot="end" name="push-outline" color="primary"></ion-icon>
+        </ion-item>
+      </ion-list>
     </ion-content>
     <ion-footer>
       <ion-toolbar>

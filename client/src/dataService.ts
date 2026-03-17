@@ -11,6 +11,7 @@ import {
   type CollectionResponses,
 } from './pb_types'
 import { memo, state, watch } from 'solit-html'
+import { registerPushNotifications } from './utils'
 
 /**
  * About data management
@@ -69,6 +70,11 @@ export const myAvatarUrl = () => {
     return pb.files.getURL(user, user.avatar)
   }
   return 'https://ionicframework.com/docs/img/demos/avatar.svg'
+}
+
+export const sendTestPush = async () => {
+  await registerPushNotifications()
+  await pb.send('/api/test-notification', { method: 'POST' })
 }
 
 // The Tanstack DB we have at home

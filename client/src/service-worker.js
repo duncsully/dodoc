@@ -1,24 +1,23 @@
-self.addEventListener('push', (event) => {
-  const body = event.data?.text() ?? 'Dodoc reminder!'
+/// <reference lib="webworker" />
+
+self.addEventListener('push', (e) => {
+  /**
+   * @type {PushEvent}
+   */
+  const event = e
+  const { title, body, data } = event.data?.json() ?? {}
   event.waitUntil(
     self.registration.showNotification('Dodoc', {
+      title,
       body,
+      data,
+      requireInteraction: true,
     })
   )
 })
 
 self.addEventListener('notificationclick', (event) => {
-  const url = self.location.origin
+  const url = new URL(event.notification.data.docId ?? '', self.location.origin)
   event.notification.close() // Android needs explicit close.
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window' }).then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
-        const client = windowClients[i]
-        if (client.url.startsWith(url) && 'focus' in client) {
-          return client.focus()
-        }
-      }
-      return self.clients.openWindow?.(url)
-    })
-  )
+  event.waitUntil(clients.openWindow(url))
 })

@@ -38,6 +38,7 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      registerType: 'autoUpdate',
     }),
   ],
 })
