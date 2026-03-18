@@ -8,6 +8,7 @@ import { DocumentView } from './views/DocumentView'
 import { DocumentFormView } from './views/DocumentFormView'
 import { customElementFrom } from './utils'
 import { ProfileFormView } from './views/ProfileFormView'
+import { ChangePasswordFormView } from './views/ChangePasswordFormView'
 
 export function App() {
   return html`
@@ -20,6 +21,7 @@ export function App() {
 const routes = {
   '/': HomeView,
   '/profile': ProfileFormView,
+  '/change-password': ChangePasswordFormView,
   '/new': DocumentFormView,
   '/:id': DocumentView,
   '/:id/edit': DocumentFormView,

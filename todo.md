@@ -23,17 +23,15 @@
 - [x] Delete documents
 - [x] Share documents with other users
   - [x] Show sharing info
-- [ ] Reminders as push notifications
+- [x] Reminders as push notifications
   - [x] Generate VAPID keys and send public one
   - [x] Request permission in UI and save data to DB
   - [x] Table for reminders
   - [x] UI to set a reminder datetime
   - [x] Server job to check for reminders, send notifications
-  - [ ] Remove subscription if rejected?
 - [x] User profile (avatar, visibility etc.)
   - [x] User name (and show in shared document list)
-  - [ ] Change email and password
-- [ ] Responsive design using fixed width ion-grid
+  - [x] Change password
 - [x] Make sure logout is working reliably
 
 ## Someday
@@ -70,6 +68,9 @@
 - [ ] Auto save?
 - [ ] MD cheat sheet?
 - [ ] More robust document-reminder saving
+- [ ] Responsive design using fixed width ion-grid
+- [ ] Remove subscription if push fails?
+- [ ] Proper email support**
 
 ## Polish
 
@@ -107,3 +108,5 @@
 % I could signalize whether the browser currently has push permissions and use that to update the UI. If we don't have permission yet, we'd likely want to display a little info dialog to the user explaining that we need permission in order for reminders to work (in the webapp) and that they'll need to accept the prompt, otherwise we don't let them continue setting a reminder.
 
 + Right now I have a unique index constraint on user + document determining that a user should only have one reminder configuration per document, and we'd likely get all of the recurrences we need within this single config, but maybe if that still ends up too limiting and we need something even more flexible we could allow setting up multiple reminder configs per document?
+
+** Unfortunately supporting emails is not really feasible portably though for anyone sufficiently determined enough they could configure SMTP server settings. Maybe I could check whether SMTP settings are set and determine what features are enabled at that point? Otherwise it's easiest for now to just assume that access to the site is secured, that people will never need to change their email, and that if they forget their password they can have a superuser assist in resetting it.

@@ -59,7 +59,7 @@ export function ProfileFormView() {
           </ion-item>
         </ion-list>
         <ion-note class="ion-padding">
-          Updating email and password not currently supported
+          Updating email not currently supported
         </ion-note>
         <ion-list inset>
           <ion-item>
@@ -104,6 +104,9 @@ export function ProfileFormView() {
         </ion-list>
       </form>
       <ion-list inset>
+        <ion-item href="/change-password" router-direction="forward">
+          Change Password
+        </ion-item>
         <ion-item button @click=${sendTestPush}>
           Send test push notification
           <ion-icon slot="end" name="push-outline" color="primary"></ion-icon>
