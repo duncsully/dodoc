@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -41,4 +41,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
     }),
   ],
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+  },
 })

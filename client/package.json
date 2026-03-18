@@ -7,13 +7,16 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "typegen": "npx pocketbase-typegen --db ../server/pb_data/data.db --out ./src/pb_types.ts"
+    "typegen": "npx pocketbase-typegen --db ../server/pb_data/data.db --out ./src/pb_types.ts",
+    "test": "vitest"
   },
   "devDependencies": {
+    "happy-dom": "^20.8.4",
     "typescript": "~5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-pwa": "^1.2.0",
-    "vite-plugin-static-copy": "^3.1.5"
+    "vite-plugin-static-copy": "^3.1.5",
+    "vitest": "^4.1.0"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",
