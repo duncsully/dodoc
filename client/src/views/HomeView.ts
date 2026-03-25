@@ -1,4 +1,4 @@
-import { html } from 'solit-html'
+import { html, state } from 'solit-html'
 import {
   logout,
   searchQuery,
@@ -12,15 +12,27 @@ import { nothing } from 'lit-html'
 
 export function HomeView() {
   const documents = useDocuments()
+  // The CSS approach for this just was not working...
+  const [searchFocused, setSearchFocused] = state(false)
   return html`
     <ion-header>
       <ion-toolbar>
         <ion-searchbar
           animated
           .value=${searchQuery}
+          show-cancel-button="focus"
           @ionInput=${withEventValue(setSearchQuery)}
+          @ionFocus=${() => setSearchFocused(true)}
+          @ionBlur=${() => setSearchFocused(false)}
         ></ion-searchbar>
-        <ion-buttons slot="end">${UserMenu()}</ion-buttons>
+        ${() =>
+          !searchFocused() &&
+          html`<ion-buttons slot="end">
+            <!-- <ion-button aria-label="filter" href="filter" color="primary">
+              <ion-icon name="filter-outline" slot="icon-only"></ion-icon>
+            </ion-button> -->
+            ${UserMenu()}
+          </ion-buttons>`}
       </ion-toolbar>
     </ion-header>
     <ion-content fixed-slot-placement="before">
