@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - name: Upload client build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: ./client/dist
+
+  build-server:
+    needs: build-client
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [windows, linux, darwin]
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Download client build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: client-dist
+          path: ./server/dist
+      - name: Set executable name
+        id: exe
+        run: |
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            echo "name=dodoc.exe" >> $GITHUB_OUTPUT
+          else
+            echo "name=dodoc" >> $GITHUB_OUTPUT
+          fi
+      - name: Build server
+        run: |
+          cd server
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ steps.exe.outputs.name }}
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: dodoc-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: server/${{ steps.exe.outputs.name }}
+
+  release:
+    needs: build-server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: ./binaries
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./binaries/**/*
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
