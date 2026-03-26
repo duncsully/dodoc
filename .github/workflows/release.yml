@@ -29,6 +29,7 @@ jobs:
         with:
           name: client-dist
           path: client/dist/
+          if-no-files-found: error
 
   build-server:
     needs: build-client
