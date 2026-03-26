@@ -13,8 +13,6 @@ export default defineConfig({
       },
       external: ['/ionic.esm.js'],
     },
-    // Playing fast and loose with paths here to make embedding easier
-    outDir: '../server/dist',
     emptyOutDir: true,
   },
   plugins: [
