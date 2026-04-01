@@ -58,13 +58,18 @@ jobs:
           fi
       - name: Build server
         run: |
+          mkdir -p binaries
           cd server
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ steps.exe.outputs.name }}
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ../binaries/dodoc-${{ matrix.goos }}-${{ matrix.goarch }}.exe
+          else
+            GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ../binaries/dodoc-${{ matrix.goos }}-${{ matrix.goarch }}
+          fi
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: dodoc-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: server/${{ steps.exe.outputs.name }}
+          path: binaries/dodoc-${{ matrix.goos }}-${{ matrix.goarch }}*
 
   release:
     needs: build-server
@@ -80,7 +85,7 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./binaries/**/*
+          files: binaries/dodoc-*
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           draft: false
