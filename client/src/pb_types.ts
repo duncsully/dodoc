@@ -97,9 +97,11 @@ export type SuperusersRecord = {
 }
 
 export type DocumentsRecord = {
+	completed?: IsoDateString
 	content?: string
 	created: IsoAutoDateString
 	id: string
+	isTask?: boolean
 	owner?: RecordIdString
 	shared?: RecordIdString[]
 	title: string
