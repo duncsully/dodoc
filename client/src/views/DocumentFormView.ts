@@ -36,6 +36,9 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
   const copyDoc = copyId?.(false) ? useDocument(copyId) : null
 
   const [title, setTitle] = state(doc?.()?.title ?? copyDoc?.()?.title ?? '')
+  const [isTask, setIsTask] = state(
+    doc?.()?.isTask ?? copyDoc?.()?.isTask ?? false
+  )
   const [shared, setShared] = state<string[]>(doc?.()?.shared ?? [])
   const [content, setContent] = state(
     doc?.()?.content ?? copyDoc?.()?.content ?? ''
@@ -64,6 +67,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
       content: content(),
       shared: shared(),
       reminder: isoLocalToUtc(reminderLocalDatetime()),
+      isTask: isTask(),
     }
 
     try {
@@ -112,6 +116,17 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
             >
             </ion-input>
           </ion-item>
+          <ion-item>
+            <ion-checkbox
+              .checked=${isTask}
+              @ionChange=${(
+                e: IonCheckboxCustomEvent<CheckboxChangeEventDetail>
+              ) => setIsTask(e.detail.checked)}
+              color="primary"
+            >
+              Task
+            </ion-checkbox>
+          </ion-item>
         </ion-list>
 
         <ion-list inset>
@@ -157,6 +172,7 @@ export function DocumentFormView({ id }: { id?: (track?: boolean) => string }) {
                   setReminderLocalDatetime(null)
                 }
               }}
+              color="primary"
             >
               Remind me
             </ion-checkbox>

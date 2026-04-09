@@ -29,6 +29,13 @@ export function DocumentView({ id }: { id: () => string }) {
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
+        ${() =>
+          document.isTask &&
+          !!document.completed &&
+          html`<ion-note
+            >Completed
+            ${new Date(document.completed).toLocaleString()}</ion-note
+          >`}
         ${MarkdownDisplay(() => document.content)}
       </ion-content>
     `

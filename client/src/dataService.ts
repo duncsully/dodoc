@@ -202,27 +202,28 @@ export function useDocument(id: () => string) {
   return memo(() => fullDocuments()?.[id()])
 }
 
-async function setReminder(docId: string, reminder: string | null) {
+async function setReminder(docId: string, reminder?: string | null) {
+  if (reminder === undefined) return
+
   const existingReminder = fullDocuments()?.[docId].reminder
 
   if (!existingReminder && !reminder) {
     return
   }
-  const formattedReminder = reminder
   if (!existingReminder && reminder) {
     return await pb.collection('reminders').create({
       document: docId,
-      start: formattedReminder,
+      start: reminder,
       user: pb.authStore.record?.id,
     })
   }
   if (existingReminder && !reminder) {
     return await pb.collection('reminders').delete(existingReminder.id)
   }
-  if (existingReminder && existingReminder.start !== formattedReminder) {
+  if (existingReminder && existingReminder.start !== reminder) {
     return await pb
       .collection('reminders')
-      .update(existingReminder.id, { start: formattedReminder })
+      .update(existingReminder.id, { start: reminder })
   }
   // Not changed, do nothing
 }
@@ -240,7 +241,7 @@ export async function createDocument(
 
 export function updateDocument(
   id: string,
-  data: Update<Collections.Documents> & { reminder: string | null }
+  data: Update<Collections.Documents> & { reminder?: string | null }
 ) {
   const { reminder, ...docData } = data
   return Promise.all([

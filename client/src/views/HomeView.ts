@@ -3,6 +3,7 @@ import {
   logout,
   searchQuery,
   setSearchQuery,
+  updateDocument,
   useDocuments,
   type Document,
 } from '../dataService'
@@ -74,10 +75,12 @@ function DocumentItem(doc: Document) {
       if (notesStart === -1) return nothing
 
       const notesEnd = notesStart + search.length
+      const snippetEnd = notesEnd + 100
       return html`<p>
         ${!!notesStart && '...'}
         <mark>${doc.content.slice(notesStart, notesEnd)}</mark
-        >${doc.content.slice(notesEnd)}
+        >${doc.content.slice(notesEnd, snippetEnd)}
+        ${snippetEnd < doc.content.length && '...'}
       </p>`
     }
     // If it's not a search result, display the relative update time for shared documents
@@ -89,6 +92,19 @@ function DocumentItem(doc: Document) {
 
   return html`
     <ion-item button href=${doc.id}>
+      ${doc.isTask &&
+      html`<ion-checkbox
+        slot="start"
+        aria-label="Toggle task completion"
+        .checked=${!!doc.completed}
+        @click=${(e: Event) => e.stopImmediatePropagation()}
+        @ionChange=${async (e: Event) => {
+          const checked = (e.target as HTMLIonCheckboxElement).checked
+          updateDocument(doc.id, {
+            completed: checked ? new Date().toISOString() : '',
+          })
+        }}
+      ></ion-checkbox>`}
       <ion-label> ${doc.title} ${noteContent} </ion-label>
     </ion-item>
   `
